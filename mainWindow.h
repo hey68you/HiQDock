@@ -4,8 +4,12 @@
 
 
 //Settings Required Values and Keys
-#define ORGANIZATION_NAME       "hey68you"
-#define APPLICATION_NAME        "application/x-vnd.HiQDock"
+// #define ORGANIZATION_NAME       "hey68you"
+// #define APPLICATION_NAME        "application/x-vnd.HiQDock"
+#define ORGANIZATION_NAME       "Hi-Q-Apps"
+#define APPLICATION_NAME        "HiQDock"
+
+
 
 #define LAUNCHERS_SETTINGS_KEY                    "launchers"
 #define ITEM_WIDTH_SETTINGS_KEY                   "itemWidth"

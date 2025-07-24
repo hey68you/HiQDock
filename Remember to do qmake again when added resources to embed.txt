@@ -1,0 +1,1 @@
+Remember to do qmake again when added resources to embed!

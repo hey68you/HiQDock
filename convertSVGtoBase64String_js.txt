@@ -1,0 +1,25 @@
+/**
+ * Created by joelschw on 5/28/15.
+ */
+
+//http://stackoverflow.com/questions/9168737/read-txt-file-using-node-js
+// Make sure we got a filename on the command line.
+if (process.argv.length < 3) {
+    console.log('Usage: node ' + process.argv[1] + ' FILENAME');
+    process.exit(1);
+}
+// Read the file and print its contents.
+var fs = require('fs')
+    , filename = process.argv[2];
+fs.readFile(filename, 'utf8', function(err, data) {
+    if (err) throw err;
+    console.log('OK: ' + filename);
+    //console.log(data);
+
+    var btoa = require('btoa');
+
+    var finalBase64String = 'data:image/svg+xml;base64,'+ btoa(data);
+
+    console.log(finalBase64String);
+
+});

@@ -1,0 +1,4 @@
+1. the .pro file needs to be created/edited by hand manually
+2. then run > qmake -o Makefile HiQDockApp.pro
+3. then run > make clean
+4. then run > make

@@ -1,3 +1,6 @@
+HiQDock
+Makefile
+
 # Prerequisites
 *.d
 
@@ -39,3 +42,11 @@
 
 # debug information files
 *.dwo
+
+# Qt compiled files
+moc_*
+qrc_*
+.qmake.stash
+
+# IDE project (genio on Haiku)
+.genio

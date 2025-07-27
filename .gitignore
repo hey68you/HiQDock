@@ -50,3 +50,7 @@ qrc_*
 
 # IDE project (genio on Haiku)
 .genio
+.idx
+.qtc_*
+*.user
+*.kdev4

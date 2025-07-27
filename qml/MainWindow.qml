@@ -12,7 +12,9 @@ Rectangle {
 
 //    anchors.bottom: parent.bottom;
 
-    color: (debugEnabled) ? "#3a585a" : "transparent";
+    //color: (debugEnabled) ? "#3a585a" : "transparent";
+    color: "transparent";
+
 //    color: "#306498"//"gray";
 
     property bool    yes:                  true;

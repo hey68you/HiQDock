@@ -63,6 +63,7 @@ Rectangle {
         }
     }
 
+    //Test comment for git
     //http://stackoverflow.com/questions/11359854/update-listview-showin-in-tab-bar-layout-qml
     property variant folderModel
     function updateModel() {

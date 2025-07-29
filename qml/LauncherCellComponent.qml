@@ -25,6 +25,14 @@ Component
         signal setChangingIcon(bool changingIcon);
         signal triggerLaunchApp();
 
+        // Connections {
+        //    target: fullAppWindow // Reference to the emitting object
+        //    function afterNewIconPicked(pathToIcon, indexOfItem) { // Signal handler for 'dataChanged'
+        //        console.log('qml-debug->connections: pathToIcon', pathToIcon, 'indexOfItem', indexOfItem);
+        //    }
+        // }
+
+
         onTriggerLaunchApp:
         {
             mainWin.launch(appsModel.get(model.index)[appStringKey]);
@@ -168,7 +176,7 @@ Component
         function getImage () {
 
             var imageName = appsModel.get(model.index)[iconImageKey];
-            if (imageName == "")
+            if (imageName === "")
             {
                 return mainWin.getIconBase64UriForFile(appsModel.get(model.index)[appStringKey]);
             }
@@ -179,14 +187,18 @@ Component
             else
             {
                 var storedImagePath = appsModel.get(model.index)[iconImageKey];
-//                console.log("storedImagePath.indexOf('file:')", storedImagePath.indexOf('file:'));
+                console.log("qml-debug->storedImagePath.indexOf('file:')", storedImagePath.indexOf('file:'));
 
                 if (storedImagePath.indexOf('file:') === 0) {
+                    console.log("qml-debug->storedImagePath", storedImagePath);
                     return storedImagePath;
                 }
                 else {
 //                    return "file://" + iconPath + "/" + appsModel.get(model.index)[iconImageKey];
-                    return "file://" + iconPath + "/" + storedImagePath;
+                    var finalPath = "file://" + iconPath + "/" + storedImagePath;
+                    console.log("qml-debug->finalPath", finalPath);
+                    // return "file://" + iconPath + "/" + storedImagePath;
+                    return finalPath;
                 }
             }
         }

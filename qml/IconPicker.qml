@@ -63,7 +63,6 @@ Rectangle {
         }
     }
 
-    //Test comment for git
     //http://stackoverflow.com/questions/11359854/update-listview-showin-in-tab-bar-layout-qml
     property variant folderModel
     function updateModel() {
@@ -93,6 +92,7 @@ Rectangle {
 //                console.log("on folder change signal-handler in QML! new folder = " + folderModel.folder);
 //                console.log("on folder change signal-handler in QML! starting = " + iconPickerInitialFolder);
 //                showDotAndDotDot =  (folderModel.folder == ("file://" + iconPickerInitialFolder)) ? false : true;
+                console.log('qml-debug->folderModel.folder', folderModel.folder);
                 showDotAndDotDot = ((folderModel === undefined) || (folderModel.folder === undefined) || (folderModel.folder === ("file://" + iconPickerInitialFolder))) ? false : true;
             }
         }
@@ -125,7 +125,7 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
 
 //                source: (folderModel.isFolder(model.index)) ? "" : filePath;
-                source: (folderModel.isFolder(model.index)) ? "" : (filePath != undefined) ? filePath : "";
+                source: (folderModel.isFolder(model.index)) ? "" : (filePath != undefined) ? "file://" + filePath : "";
                 
             }
 
@@ -135,7 +135,7 @@ Rectangle {
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                text: (folderModel.isFolder(model.index)) ? "/"+fileName : fileName;
+                text: (folderModel.isFolder(model.index) && fileName) ? "/"+fileName : (fileName) ? fileName : "unknown-fileName";
                 visible: (folderModel.isFolder(model.index)) ? true : (mouseArea.containsMouse);
 //                smooth: true;
                 font.bold: true;
@@ -165,8 +165,8 @@ Rectangle {
                 hoverEnabled: true;
 
                 onClicked: {
-//                    console.log("clicked = " + filePath /*folderModel.folder + fileName*/);
-                    if (false == folderModel.isFolder(model.index))
+                   console.log("qml-debug->clicked = " + filePath /*folderModel.folder + fileName*/);
+                    if (false === folderModel.isFolder(model.index))
                     {
 //                        console.log("clicked-> filePath = " + filePath /*folderModel.folder + fileName*/);
 //                        console.log("clicked->folderModel.folder " + folderModel.folder);
@@ -175,18 +175,24 @@ Rectangle {
 //                        console.log("clicked-> folderModel.folder.fileName = " + folderModel.folder.fileName /*folderModel.folder + fileName*/);
 
 
+                        console.log("qml-debug->OnClicked fileName = ", fileName);
                         var fullPathURL = folderModel.folder + "/" + fileName;
+                        console.log("qml-debug->OnClicked fullPathURL = ", fullPathURL);
                         var stringToRemoveFromURL = "file://" + iconPickerInitialFolder + "/";
+
+                        // var stringToRemoveFromURL = "file://";
 //                        console.log("stringToRemoveFromURL = " + stringToRemoveFromURL);
                         var normalizedFilePath = fullPathURL.split(stringToRemoveFromURL).pop();
 
-//                        console.log("normalizedFilePath = " + normalizedFilePath);
+                        console.log("qml-debug->OnClicked->normalizedFilePath = " + normalizedFilePath, "fileName => ", fileName);
                         iconSelected(normalizedFilePath);
-
+                        // iconSelected("file://"+normalizedFilePath);
                     }
                     if (folderModel.isFolder(model.index))
                     {
-                        folderModel.folder = filePath;
+                        console.log("qml-debug->folderModel.isFolder->filePath = " + filePath);
+                        // folderModel.folder = filePath;
+                        folderModel.folder = "file://"+filePath;
                     }
                 }
             }

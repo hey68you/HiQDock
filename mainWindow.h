@@ -36,6 +36,7 @@
 #include <Roster.h>
 //#include <QDialog>
 #include <QSystemTrayIcon>
+#include <storage/Path.h>
 
 ////#include "ui_PrefsWindow.h"
 //#include "ui_PreferencesDialog.h"
@@ -165,6 +166,8 @@ class MainWindow : public QMainWindow
         void writeSettings();
         bool isOrientationChanging(int newPosition);
         void moveScreenToPosition(int newPosition);
+		
+		BPath userSettingsPath;
 
         // QDeclarativeView *view;
 		QScreen          *screen;

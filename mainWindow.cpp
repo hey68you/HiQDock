@@ -22,7 +22,7 @@
 #include <Application.h>
 
 #include <storage/Entry.h>
-#include <storage/Path.h>
+//#include <storage/Path.h>
 #include <storage/AppFileInfo.h>
 //#include "ui_PreferencesDialog.h"
 //#include "mainWindow.h"
@@ -90,6 +90,7 @@ void QBeLooper::MessageReceived(BMessage *msg)
         case B_SOME_APP_ACTIVATED:
 		{
 //            printf("Launched, Quit or AppActivated: Yay msg rec'd\n");
+            qDebug() << "QBeLooper::MessageReceived (B_SOME_APP_ACTIVATED)";
             theMainWindow_->MessageReceived(msg);
 			break;
 		}
@@ -140,8 +141,8 @@ void QBeLooper::MessageReceived(BMessage *msg)
 //}
 
 MainWindow::MainWindow()
-    // : QMainWindow(0, Qt::FramelessWindowHint)
-    : QMainWindow()
+    : QMainWindow(0, Qt::FramelessWindowHint)
+    //: QMainWindow()
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -197,10 +198,10 @@ MainWindow::MainWindow()
 	qDebug() << "Qt configLocation" << configLocation;
 	
 	
-	BPath path;
-	status_t result = find_directory(B_USER_SETTINGS_DIRECTORY, &path);
+	// BPath path;
+	status_t result = find_directory(B_USER_SETTINGS_DIRECTORY, &userSettingsPath);
 	if (result == B_OK) {
-		qDebug() <<  "\n\n" << "B_USER_SETTINGS_DIRECTORY" << path.Path() << "\n\n";
+		qDebug() <<  "\n\n" << "B_USER_SETTINGS_DIRECTORY" << userSettingsPath.Path() << "\n\n";
 	}
 	else {
 		qDebug() << "Error getting B_USER_SETTINGS_DIRECTORY";
@@ -213,7 +214,7 @@ MainWindow::MainWindow()
         // dir.mkpath(iconsFolder);
     // }
 	
-    QDir dir(path.Path());
+    QDir dir(userSettingsPath.Path());
     if (!dir.exists(iconsFolder)) {
         dir.mkpath(iconsFolder);
     }
@@ -247,16 +248,31 @@ MainWindow::MainWindow()
     \*************************************************************/
 
     //Take screenshot for fake transparent background
-    //be_app->HideCursor();
-    fullScreenShotPixmap = QPixmap();
+    be_app->HideCursor();
+    // fullScreenShotPixmap = QPixmap();
     // //fullScreenShotPixmap = QPixmap::grabWindow( QApplication::desktop()->winId() );
     // fullScreenShotPixmap = QPixmap::grabWindow( 0 );
+	
+	
+	screen = QGuiApplication::primaryScreen();
+    if (!screen) {
+        qWarning() << "No primary screen found for capture.";
+        return;
+    }
+
+    // Capture the entire screen
+	fullScreenShotPixmap = screen->grabWindow(0); // 0 means the root window / entire desktop
+	
+	
+	
+	
+	
     
     // qDebug() << "after launch: QApplication::desktop()->winId() = " << QApplication::desktop()->winId();
 
     qDebug() << "after launch: fullScreenShotPixmap = " << fullScreenShotPixmap.isNull();			
 
-    //be_app->ShowCursor();
+    be_app->ShowCursor();
 
     //// view = new QDeclarativeView; //Holds the qml view
     
@@ -293,14 +309,14 @@ MainWindow::MainWindow()
 //    view->rootContext()->setContextProperty("iconPath", QDir::currentPath() + "/" + iconsFolder);
     // view->rootContext()->setContextProperty("iconPath", QDir::homePath() + "/" + iconsFolder);
 	
-	QString pathAsString(path.Path());
+	QString pathAsString(userSettingsPath.Path());
     view->rootContext()->setContextProperty("iconPath", pathAsString + "/" + iconsFolder);
 
     // double windowMaxWidth  = QApplication::desktop()->availableGeometry().width();
     // double windowMaxHeight = QApplication::desktop()->availableGeometry().height();
 
-    // QScreen *screen = QGuiApplication::primaryScreen();
-	screen = QGuiApplication::primaryScreen();
+	//screen = QGuiApplication::primaryScreen();
+	
     QRect  screenGeometry = screen->geometry();
     double windowMaxWidth = screenGeometry.height();
     double windowMaxHeight = screenGeometry.width();
@@ -312,24 +328,34 @@ MainWindow::MainWindow()
 
     //Set QML widget background to transparent
     // QPalette vPalette;
+	QPalette vPalette;
+    vPalette.setColor(QPalette::Base, Qt::transparent);
+    view->setPalette(vPalette);
 
-    // view->setAttribute(Qt::WA_TranslucentBackground);
+	view->setClearColor(Qt::transparent); 
+    view->setAttribute(Qt::WA_TranslucentBackground);
+    view->setAttribute(Qt::WA_AlwaysStackOnTop);
+
 	
     // view->setColor(Qt::transparent);
-    
+
 	// vPalette.setColor(QPalette::Base, Qt::transparent);
     // view->setPalette(vPalette);
-
+ 
     view->rootContext()->setContextProperty("mainWin", this);
 
     // view->setSource(QUrl("qrc:///qml/MainWindow.qml"));	
 	view->setSource(QUrl("qrc:///qml/MainWindow.qml"));
+	
 	setCentralWidget(view);
 	
-    // view->setSource("qml/MainWindow.qml");
+    
+	// view->setSource("qml/MainWindow.qml");
     // view->setSource(QUrl("qrc:///qml/NewMainWindowTest.qml"));
     // view->setMinimumSize ( 5, 5 );
     // view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+	
+	view->setResizeMode(QQuickWidget::SizeRootObjectToView);
 	
 	
 
@@ -356,20 +382,21 @@ MainWindow::MainWindow()
     }
 
     //Connect up the SLOTs for QML communication
-	// QObject *rootObject = view->rootObject();
-// 
-    // QObject::connect(this, SIGNAL(notifyAppLaunched(QVariant)), rootObject, SLOT(appLaunched_SLOT(QVariant)));
-    // QObject::connect(this, SIGNAL(notifyAppQuit(QVariant)), rootObject, SLOT(appQuit_SLOT(QVariant)));
-    // QObject::connect(this, SIGNAL(notifyDockActivated()), rootObject, SLOT(dockWasActivated_SLOT()));
-    // QObject::connect(this, SIGNAL(notifyDockDeactivated()), rootObject, SLOT(dockWasDeactivated_SLOT()));
-// 
-    // QObject::connect(this, SIGNAL(addLauncherToQML(QVariant, QVariant)), rootObject, SLOT(addLauncher_SLOT(QVariant, QVariant)));
-    // QObject::connect(this, SIGNAL(updateToNewIconImageForItemAt(QVariant, QVariant)), rootObject, SLOT(updateToNewIconImageForItemAt_SLOT(QVariant, QVariant)));
-    // QObject::connect(this, SIGNAL(updateAutoHide(QVariant)), rootObject, SLOT(updateAutoHide_SLOT(QVariant)));
-    // QObject::connect(this, SIGNAL(updateMagnificationEnabled(QVariant)), rootObject, SLOT(updateMagnificationEnabled_SLOT(QVariant)));
-    // QObject::connect(this, SIGNAL(notifyQMLValueForSizeUpdated(QVariant)), rootObject, SLOT(notifyQMLValueForSizeUpdated_SLOT(QVariant)));
-    // QObject::connect(this, SIGNAL(updateNewScreenPosition(QVariant)), rootObject, SLOT(updateNewScreenPosition_SLOT(QVariant)));
+	QObject *rootObject = view->rootObject();
+
+    QObject::connect(this, SIGNAL(notifyAppLaunched(QVariant)), rootObject, SLOT(appLaunched_SLOT(QVariant)));
+    QObject::connect(this, SIGNAL(notifyAppQuit(QVariant)), rootObject, SLOT(appQuit_SLOT(QVariant)));
+    QObject::connect(this, SIGNAL(notifyDockActivated()), rootObject, SLOT(dockWasActivated_SLOT()));
+    QObject::connect(this, SIGNAL(notifyDockDeactivated()), rootObject, SLOT(dockWasDeactivated_SLOT()));
+
+    QObject::connect(this, SIGNAL(addLauncherToQML(QVariant, QVariant)), rootObject, SLOT(addLauncher_SLOT(QVariant, QVariant)));
+    QObject::connect(this, SIGNAL(updateToNewIconImageForItemAt(QVariant, QVariant)), rootObject, SLOT(updateToNewIconImageForItemAt_SLOT(QVariant, QVariant)));
+    QObject::connect(this, SIGNAL(updateAutoHide(QVariant)), rootObject, SLOT(updateAutoHide_SLOT(QVariant)));
+    QObject::connect(this, SIGNAL(updateMagnificationEnabled(QVariant)), rootObject, SLOT(updateMagnificationEnabled_SLOT(QVariant)));
+    QObject::connect(this, SIGNAL(notifyQMLValueForSizeUpdated(QVariant)), rootObject, SLOT(notifyQMLValueForSizeUpdated_SLOT(QVariant)));
+    QObject::connect(this, SIGNAL(updateNewScreenPosition(QVariant)), rootObject, SLOT(updateNewScreenPosition_SLOT(QVariant)));
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -450,12 +477,22 @@ void MainWindow::Activate()
 
             // Refresh background image when dock is surely hidden
             qDebug() << "refreshing background";
-//            be_app->HideCursor();
-			fullScreenShotPixmap = QPixmap();
+			//be_app->HideCursor();
+			// fullScreenShotPixmap = QPixmap();
             // //fullScreenShotPixmap = QPixmap::grabWindow( QApplication::desktop()->winId() );
             // fullScreenShotPixmap = QPixmap::grabWindow( 0 );
+			
+			// QScreen *screen = QGuiApplication::primaryScreen();
+			screen = QGuiApplication::primaryScreen();
+			if (!screen) {
+				qWarning() << "No primary screen found for capture.";
+				return;
+			}
 
-            qDebug() << "MainWindow::Activate fullScreenShotPixmap = " << fullScreenShotPixmap.height();			
+			// Capture the entire screen
+			fullScreenShotPixmap = screen->grabWindow(0); 			
+
+            qDebug() << "MainWindow::Activate fullScreenShotPixmap = " << fullScreenShotPixmap.height();
             int ms = 10;
             struct timespec ts = { ms / 1000, (ms % 1000) * 1000 * 1000 };
             nanosleep(&ts, NULL);
@@ -536,8 +573,6 @@ void MainWindow::loadHaikuMouseTrackingView()
 void MainWindow::paintEvent(QPaintEvent *pe)
 {
 
-	return;
-	
     QPainter *pPainter = new QPainter(this);
 
     //Original lowerRect
@@ -660,8 +695,12 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
 
 //    qDebug() << "QDir::currentPath() + / iconsFolder =  " << QDir::homePath() << "/" << iconsFolder;
 
+
+
+	QString pathAsString(userSettingsPath.Path()); 
+
 //    pickerView->rootContext()->setContextProperty("iconPickerInitialFolder", QDir::currentPath() + "/" + iconsFolder);
-    pickerView->rootContext()->setContextProperty("iconPickerInitialFolder", QDir::homePath() + "/" + iconsFolder);
+    pickerView->rootContext()->setContextProperty("iconPickerInitialFolder", pathAsString + "/" + iconsFolder);
     pickerView->rootContext()->setContextProperty("launcherToolTip", getStringValueFromJSON(toolTipKey, dataList.at(indexOfItem)));
     pickerView->rootContext()->setContextProperty("originalIconImageSource", getIconBase64UriForFile(getStringValueFromJSON(appStringKey, dataList.at(indexOfItem))));
 

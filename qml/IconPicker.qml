@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.5
-import Qt.labs.folderlistmodel 1.0
+import Qt.labs.folderlistmodel
 
 Rectangle {
 
@@ -58,7 +58,7 @@ Rectangle {
 
     focus: true;
     Keys.onPressed: {
-        if (event.key == Qt.Key_Escape) {
+        if (event.key === Qt.Key_Escape) {
             iconSelected("");
         }
     }
@@ -69,7 +69,7 @@ Rectangle {
         var currentFolder = ""
         if (folderModel) {
             currentFolder = folderModel.folder
-            folderModel.destroy()
+            folderModel.destroy();
         }
         folderModel = modelComponent.createObject(iconPickerTopLevelView, {"folder": ((currentFolder == "") || (currentFolder == undefined)) ? "file://" + iconPickerInitialFolder : currentFolder})
     }
@@ -92,7 +92,7 @@ Rectangle {
 //                console.log("on folder change signal-handler in QML! new folder = " + folderModel.folder);
 //                console.log("on folder change signal-handler in QML! starting = " + iconPickerInitialFolder);
 //                showDotAndDotDot =  (folderModel.folder == ("file://" + iconPickerInitialFolder)) ? false : true;
-                showDotAndDotDot = ((folderModel == undefined) || (folderModel.folder == undefined) || (folderModel.folder == ("file://" + iconPickerInitialFolder))) ? false : true;
+                showDotAndDotDot = ((folderModel === undefined) || (folderModel.folder === undefined) || (folderModel.folder === ("file://" + iconPickerInitialFolder))) ? false : true;
             }
         }
     }
@@ -125,6 +125,7 @@ Rectangle {
 
 //                source: (folderModel.isFolder(model.index)) ? "" : filePath;
                 source: (folderModel.isFolder(model.index)) ? "" : (filePath != undefined) ? filePath : "";
+                
             }
 
             Text {

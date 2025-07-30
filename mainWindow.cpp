@@ -245,7 +245,7 @@ MainWindow::MainWindow()
         For now see paintEvent hook (over-ride) parent class method
         to draw the pixmap screen
 
-    \*************************************************************/
+    \*************************************************************/    
 
     //Take screenshot for fake transparent background
     be_app->HideCursor();
@@ -395,6 +395,7 @@ MainWindow::MainWindow()
     QObject::connect(this, SIGNAL(updateMagnificationEnabled(QVariant)), rootObject, SLOT(updateMagnificationEnabled_SLOT(QVariant)));
     QObject::connect(this, SIGNAL(notifyQMLValueForSizeUpdated(QVariant)), rootObject, SLOT(notifyQMLValueForSizeUpdated_SLOT(QVariant)));
     QObject::connect(this, SIGNAL(updateNewScreenPosition(QVariant)), rootObject, SLOT(updateNewScreenPosition_SLOT(QVariant)));
+    // QObject::connect(this, SIGNAL(notifyApplistModified()), rootObject, SLOT(notifyApplistModified_SLOT()));
 }
 
 
@@ -572,7 +573,6 @@ void MainWindow::loadHaikuMouseTrackingView()
 
 void MainWindow::paintEvent(QPaintEvent *pe)
 {
-
     QPainter *pPainter = new QPainter(this);
 
     //Original lowerRect
@@ -764,6 +764,7 @@ void MainWindow::updateIconImageInMasterListForItemAt(int indexOfItem, const QSt
     qDebug() << "new icon file name to add to masterAppsModel list = " + jsonString;
     dataList[indexOfItem] = jsonString;
     view->rootContext()->setContextProperty("masterAppsModel", QVariant::fromValue(dataList));
+    // emit notifyApplistModified();
     writeSettings();
 }
 

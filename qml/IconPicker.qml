@@ -92,7 +92,7 @@ Rectangle {
 //                console.log("on folder change signal-handler in QML! new folder = " + folderModel.folder);
 //                console.log("on folder change signal-handler in QML! starting = " + iconPickerInitialFolder);
 //                showDotAndDotDot =  (folderModel.folder == ("file://" + iconPickerInitialFolder)) ? false : true;
-                console.log('qml-debug->folderModel.folder', folderModel.folder);
+                // console.log('qml-debug->folderModel.folder', folderModel.folder);
                 showDotAndDotDot = ((folderModel === undefined) || (folderModel.folder === undefined) || (folderModel.folder === ("file://" + iconPickerInitialFolder))) ? false : true;
             }
         }
@@ -165,7 +165,7 @@ Rectangle {
                 hoverEnabled: true;
 
                 onClicked: {
-                   console.log("qml-debug->clicked = " + filePath /*folderModel.folder + fileName*/);
+                   // console.log("qml-debug->clicked = " + filePath /*folderModel.folder + fileName*/);
                     if (false === folderModel.isFolder(model.index))
                     {
 //                        console.log("clicked-> filePath = " + filePath /*folderModel.folder + fileName*/);
@@ -175,22 +175,22 @@ Rectangle {
 //                        console.log("clicked-> folderModel.folder.fileName = " + folderModel.folder.fileName /*folderModel.folder + fileName*/);
 
 
-                        console.log("qml-debug->OnClicked fileName = ", fileName);
+                        // console.log("qml-debug->OnClicked fileName = ", fileName);
                         var fullPathURL = folderModel.folder + "/" + fileName;
-                        console.log("qml-debug->OnClicked fullPathURL = ", fullPathURL);
+                        // console.log("qml-debug->OnClicked fullPathURL = ", fullPathURL);
                         var stringToRemoveFromURL = "file://" + iconPickerInitialFolder + "/";
 
                         // var stringToRemoveFromURL = "file://";
 //                        console.log("stringToRemoveFromURL = " + stringToRemoveFromURL);
                         var normalizedFilePath = fullPathURL.split(stringToRemoveFromURL).pop();
 
-                        console.log("qml-debug->OnClicked->normalizedFilePath = " + normalizedFilePath, "fileName => ", fileName);
+                        // console.log("qml-debug->OnClicked->normalizedFilePath = " + normalizedFilePath, "fileName => ", fileName);
                         iconSelected(normalizedFilePath);
                         // iconSelected("file://"+normalizedFilePath);
                     }
                     if (folderModel.isFolder(model.index))
                     {
-                        console.log("qml-debug->folderModel.isFolder->filePath = " + filePath);
+                        // console.log("qml-debug->folderModel.isFolder->filePath = " + filePath);
                         // folderModel.folder = filePath;
                         folderModel.folder = "file://"+filePath;
                     }

@@ -106,6 +106,8 @@ Rectangle {
 
     \**********************************************************************************/
 
+    // signal afterNewIconPicked(string pathToIcon, number indexOfItem);
+
     property alias mouseState: mouseState;
 
     QtObject {
@@ -172,6 +174,8 @@ Rectangle {
             appsModel.get(indexOfItem)[iconImageKey] = pathToIcon;
             var jsonDataString = JSON.stringify (appsModel.get(indexOfItem));
             mainWin.updateIconImageInMasterListForItemAt(indexOfItem, jsonDataString);
+
+            // fullAppWindow.afterNewIconPicked(pathToIcon, indexOfItem);
         }
 
         var itemToUnHighlight = repeaterContainer.itemAt(indexOfItem);
@@ -187,7 +191,7 @@ Rectangle {
         {
             var oneAppSigString = appsModel.get(i)[appStringKey];
 
-            if (oneAppSigString.toUpperCase() == appSigString.toUpperCase())
+            if (oneAppSigString.toUpperCase() === appSigString.toUpperCase())
             {
                 //console.log("in QML app setting to running app: " + appSigString);
 
@@ -300,6 +304,12 @@ Rectangle {
 
         iconResizingInProgress = no;
     }
+
+    // function notifyApplistModified_SLOT()
+    // {
+    //     console.log('->notifyApplistModified_SLOT');
+    //     loadMasterAppsListToModel();
+    // }
 
     function updateNewScreenPosition_SLOT(newScreenPosition)
     {
@@ -421,13 +431,13 @@ Rectangle {
             var x = 0 - (thisItem.width - itemWidth) * (currentX - thisItem.originalX)/itemWidth;
             return x;
         }
-        else if (isMouseInsideDock && (thisItem.width == itemWidth))
+        else if (isMouseInsideDock && (thisItem.width === itemWidth))
         {
             return totalWidthCalc;
         }
         else if  ((thisItem.index > 0) && (thisItem.index < appsModel.count))
         {
-            if (thisItem.LayoutMirroring.enabled == false)
+            if (thisItem.LayoutMirroring.enabled === false)
             {
                 var prevItem = repeaterContainer.itemAt(thisItem.index - 1);
                 return prevItem.width - itemWidth + prevItem.anchors.leftMargin;
@@ -447,7 +457,7 @@ Rectangle {
                 }
             }
         }
-        else if (thisItem.index == 0)
+        else if (thisItem.index === 0)
         {
             var nextItem = repeaterContainer.itemAt(thisItem.index + 1);
 
@@ -548,7 +558,7 @@ Rectangle {
     focus: true;
     Keys.onPressed: {
 
-        if (event.key == Qt.Key_Escape) {
+        if (event.key === Qt.Key_Escape) {
             if (contextMenu.visible) {
                 contextMenu.fadeOutAnimation.start();
             }
@@ -579,13 +589,13 @@ Rectangle {
           switch (currentDockScreenPosition) {
                 case screenPosition.left:
                     return parent.left;
-                    break;
+
                 case screenPosition.right:
                     return parent.right;
-                    break;
+
                 default:
                     return undefined;
-                    break;
+
             }
         }
 
@@ -828,7 +838,7 @@ Rectangle {
                 function getBouncingTopOffset ()
                 {
                     var currentLauncherCell = (repeaterContainer.itemAt(indexForAnchoredItemAtX(currentX))) ?  repeaterContainer.itemAt(indexForAnchoredItemAtX(currentX)) : undefined;
-                    if (currentLauncherCell != undefined)
+                    if (currentLauncherCell !== undefined)
                     {
                         return currentLauncherCell.currentLiftOffSet;
                     }
@@ -844,7 +854,7 @@ Rectangle {
                 tipString: {
                     var cellData = appsModel.get(indexForAnchoredItemAtX(currentX));
 
-                    if (cellData == undefined)
+                    if (cellData === undefined)
                     {
                         return "";
                     }
@@ -885,13 +895,15 @@ Rectangle {
                 }
             }
 
+
             Repeater //anchorDebugLinesRepeater
             {
 
                 //@TODO: loader: only load this if debugEnabled
 
                 id: anchorDebugLinesRepeater;
-                model: appsModel
+                //model: debugEnabled ? appsModel : undefined;
+                model: appsModel;
 
                 Rectangle {
                     color: (debugEnabled) ? "red" : "transparent";

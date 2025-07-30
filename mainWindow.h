@@ -147,6 +147,7 @@ class MainWindow : public QMainWindow
         void updateMagnificationEnabled(QVariant enable);
         void updateNewScreenPosition(QVariant newScreenPosition);
         void notifyQMLValueForSizeUpdated(QVariant newPercent);
+        // void notifyApplistModified();
 
     protected:
         void closeEvent(QCloseEvent *event);

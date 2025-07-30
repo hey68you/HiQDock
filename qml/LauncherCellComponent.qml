@@ -51,6 +51,9 @@ Component
                 blinkingBorderAnimation.stop();
                 changingIconIndicator.opacity = 0;
                 isChangingIcon = false;
+                imageInRect.source = getImage();
+                imageInRectHiRes.source = getImage();
+                reflectedImage.source = getImage();
             }
         }
 
@@ -187,16 +190,16 @@ Component
             else
             {
                 var storedImagePath = appsModel.get(model.index)[iconImageKey];
-                console.log("qml-debug->storedImagePath.indexOf('file:')", storedImagePath.indexOf('file:'));
+                // console.log("qml-debug->storedImagePath.indexOf('file:')", storedImagePath.indexOf('file:'));
 
                 if (storedImagePath.indexOf('file:') === 0) {
-                    console.log("qml-debug->storedImagePath", storedImagePath);
+                    // console.log("qml-debug->storedImagePath", storedImagePath);
                     return storedImagePath;
                 }
                 else {
 //                    return "file://" + iconPath + "/" + appsModel.get(model.index)[iconImageKey];
                     var finalPath = "file://" + iconPath + "/" + storedImagePath;
-                    console.log("qml-debug->finalPath", finalPath);
+                    // console.log("qml-debug->finalPath", finalPath);
                     // return "file://" + iconPath + "/" + storedImagePath;
                     return finalPath;
                 }
@@ -510,12 +513,12 @@ Component
 
                 //console.log("onPressed");
 
-                if (mouse.button == Qt.RightButton)
+                if (mouse.button === Qt.RightButton)
                 {
                     showContextMenu();
                     return;
                 }
-                else if (mouse.button != Qt.RightButton)
+                else if (mouse.button !== Qt.RightButton)
                 {
                     rightPressOnCell = no;
                 }

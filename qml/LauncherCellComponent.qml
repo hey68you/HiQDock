@@ -100,7 +100,7 @@ Component
                     return undefined;
                 }
 
-                return anchoredRepeater.itemAt(model.index).left;
+                return anchoredRepeater?.itemAt?.(model.index)?.left;
             }
             else
             {

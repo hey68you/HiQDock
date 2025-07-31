@@ -132,17 +132,19 @@ Rectangle {
             Text {
                 anchors {
                     top: (folderModel.isFolder(model.index)) ? dirIndicator.bottom : myIcon.bottom;
-                    horizontalCenter: parent.horizontalCenter
+                    horizontalCenter: parent.horizontalCenter;
                 }
 
-                text: (folderModel.isFolder(model.index) && fileName) ? "/"+fileName : (fileName) ? fileName : "unknown-fileName";
-                visible: (folderModel.isFolder(model.index)) ? true : (mouseArea.containsMouse);
+                text: (folderModel.isFolder(model.index) && fileName) ? "/"+fileName : (fileName) ? fileName.slice(0,15) : "unknown-fileName";
+                // visible: (folderModel.isFolder(model.index)) ? true : (mouseArea.containsMouse);
+                visible: true;
 //                smooth: true;
                 font.bold: true;
-                font.pointSize: (folderModel.isFolder(model.index)) ? 12 : 8;
-                style: Text.Raised;
-                styleColor: "black"
-                color: "white"
+                //font.pointSize: (folderModel.isFolder(model.index)) ? 12 : 8;
+                font.pointSize: 13;
+                // style: Text.Raised;
+                // styleColor: "black"
+                color: (folderModel.isFolder(model.index)) ? "white" : "lightsteelblue";
                 clip: true;
             }
             Text

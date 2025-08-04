@@ -73,7 +73,9 @@ Component
 
         SequentialAnimation on opacity
         {
-            id: fadeAndRemoveAnimation_
+            id: fadeAndRemoveAnimation_;
+            property variant mainWin_: mainWin;
+
 
             running: false;
 
@@ -83,10 +85,14 @@ Component
             onRunningChanged: {
                 if (!running)
                 {
-                    //console.log("2nd stage width animation finishd: Destroy myself now ! index = " + index);
+                    // console.log("2nd stage width animation finishd: Destroy myself now ! index = " + index);
                     var indexOfItemToRemove = index;
                     appsModel.remove(indexOfItemToRemove);
-                    mainWin.itemRemoved(indexOfItemToRemove);
+                    // console.log("after appsModel.remove(indexOfItemToRemove); called");
+                    // the mainWin cpp comp is not accessible here so we need the private property mainWin_ in the animatoin component
+                    //mainWin.itemRemoved(indexOfItemToRemove);
+                    mainWin_.itemRemoved(indexOfItemToRemove);
+                    // console.log("after mainWin.itemRemoved called");
                     calculateTotalWidthNeeded();
                 }
             }

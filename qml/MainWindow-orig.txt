@@ -419,13 +419,13 @@ Rectangle {
             var x = 0 - (thisItem.width - itemWidth) * (currentX - thisItem.originalX)/itemWidth;
             return x;
         }
-        else if (isMouseInsideDock && (thisItem.width == itemWidth))
+        else if (isMouseInsideDock && (thisItem.width === itemWidth))
         {
             return totalWidthCalc;
         }
         else if  ((thisItem.index > 0) && (thisItem.index < appsModel.count))
         {
-            if (thisItem.LayoutMirroring.enabled == false)
+            if (thisItem.LayoutMirroring.enabled === false)
             {
                 var prevItem = repeaterContainer.itemAt(thisItem.index - 1);
                 return prevItem.width - itemWidth + prevItem.anchors.leftMargin;

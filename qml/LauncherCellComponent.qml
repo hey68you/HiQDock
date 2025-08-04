@@ -21,6 +21,7 @@ Component
         property double              currentLiftOffSet: upperRect.anchors.bottomMargin;
 
         property SequentialAnimation fadeAndRemoveAnimation: fadeAndRemoveAnimation_;
+        property Repeater            anchoredRepeater_:     anchoredRepeater;
 
         signal setChangingIcon(bool changingIcon);
         signal triggerLaunchApp();
@@ -75,6 +76,7 @@ Component
         {
             id: fadeAndRemoveAnimation_;
             property variant mainWin_: mainWin;
+            property variant calculateTotalWidthNeeded_: calculateTotalWidthNeeded;
 
 
             running: false;
@@ -93,7 +95,8 @@ Component
                     //mainWin.itemRemoved(indexOfItemToRemove);
                     mainWin_.itemRemoved(indexOfItemToRemove);
                     // console.log("after mainWin.itemRemoved called");
-                    calculateTotalWidthNeeded();
+                    // calculateTotalWidthNeeded();
+                    calculateTotalWidthNeeded_();
                 }
             }
         }
@@ -106,7 +109,7 @@ Component
                     return undefined;
                 }
 
-                return anchoredRepeater?.itemAt?.(model.index)?.left;
+                return anchoredRepeater_?.itemAt?.(model.index)?.left;
             }
             else
             {

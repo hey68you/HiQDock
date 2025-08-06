@@ -395,7 +395,7 @@ MainWindow::MainWindow()
     QObject::connect(this, SIGNAL(updateMagnificationEnabled(QVariant)), rootObject, SLOT(updateMagnificationEnabled_SLOT(QVariant)));
     QObject::connect(this, SIGNAL(notifyQMLValueForSizeUpdated(QVariant)), rootObject, SLOT(notifyQMLValueForSizeUpdated_SLOT(QVariant)));
     QObject::connect(this, SIGNAL(updateNewScreenPosition(QVariant)), rootObject, SLOT(updateNewScreenPosition_SLOT(QVariant)));
-    // QObject::connect(this, SIGNAL(notifyApplistModified()), rootObject, SLOT(notifyApplistModified_SLOT()));
+    QObject::connect(this, SIGNAL(notifyApplistModified()), rootObject, SLOT(notifyApplistModified_SLOT()));
 }
 
 
@@ -819,6 +819,7 @@ int MainWindow::moveItems(int fromIndex, int toIndex)
     dataList.move(fromIndex, toIndex);
     view->rootContext()->setContextProperty("masterAppsModel", QVariant::fromValue(dataList));
     writeSettings();
+    emit notifyApplistModified();
     return fromIndex*toIndex;
 }
 

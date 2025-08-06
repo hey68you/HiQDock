@@ -293,11 +293,12 @@ Rectangle {
         iconResizingInProgress = no;
     }
 
-    // function notifyApplistModified_SLOT()
-    // {
-    //     console.log('->notifyApplistModified_SLOT');
-    //     loadMasterAppsListToModel();
-    // }
+    function notifyApplistModified_SLOT()
+    {
+        //needed when move items around in the dock
+        repeaterContainer.model = undefined;
+        repeaterContainer.model = appsModel;
+    }
 
     function updateNewScreenPosition_SLOT(newScreenPosition)
     {

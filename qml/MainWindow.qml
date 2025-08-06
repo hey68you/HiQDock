@@ -139,22 +139,10 @@ Rectangle {
     //called from cpp main window
     function addLauncher_SLOT(jsonDataString, index) // slot
     {
-        //console.log("addLauncher received in QML function: " + jsonDataString + " at index = " + index);
-
         var jsonObj = JSON.parse (jsonDataString);
         //console.log("jsonObj[appStringKey] = " + jsonObj[appStringKey] + "; jsonObj[iconImageKey] = " + jsonObj[iconImageKey] + "; jsonObj[toolTipKey] = " + jsonObj[toolTipKey]);
 
-        //*******************************************************************************************************
-        // this insert doesn't work: for some reason I must move newly added item to get it to anchor correctly,
-        // but I don't understand yet why
-        //
-        //  appsModel.insert(index, jsonObj);
-        //
-        //*******************************************************************************************************
-
-        appsModel.append(jsonObj);
-//        // plus one becaue we just added one to the count
-        appsModel.move(appsModel.count - 1, index, 1);
+        appsModel.insert(index, jsonObj);
 
         var appSigString = appsModel.get(index)[appStringKey];
         var isRunning = mainWin.isAppRunning(appSigString);
@@ -366,7 +354,7 @@ Rectangle {
     function calculateTotalWidthNeeded()
     {
 
-//        console.log("calculateTotalWidthNeeded->entered");
+       console.log("qml->debug->calculateTotalWidthNeeded->entered appsModel.count", appsModel.count);
 
         totalWidthCalc = 0;
 
@@ -393,7 +381,7 @@ Rectangle {
 
         fullAppWindow.width = totalWidthCalc*2 + itemWidth*appsModel.count + sidePadding*2 + contextMenu.sideMargin*6;
 
-//        console.log("setting fullAppWindow.width to " + fullAppWindow.width);
+       console.log("qml->debug->setting fullAppWindow.width to " + fullAppWindow.width);
 
         if (isDockOnSide())
         {
@@ -459,16 +447,16 @@ Rectangle {
         }
         else if (thisItem.index === 0)
         {
-            var nextItem = repeaterContainer.itemAt(thisItem.index + 1);
+            var nextItemZero = repeaterContainer.itemAt(thisItem.index + 1);
 
             // (currentHoveredIndex == 1)
             if ((currentX >= itemWidth) && (currentX <= itemWidth*2))
             {
-                return 0-nextItem.anchors.leftMargin;
+                return 0-nextItemZero.anchors.leftMargin;
             }
             else if (currentX > 0) //(currentHoveredIndex > 0)
             {
-                return nextItem.width - itemWidth + nextItem.anchors.leftMargin;
+                return nextItemZero.width - itemWidth + nextItemZero.anchors.leftMargin;
             }
         }
         return 0;
@@ -525,6 +513,8 @@ Rectangle {
 
     function loadMasterAppsListToModel()
     {
+        // console.log("qml->debug->masterAppsModel",masterAppsModel);
+        // appsModel.clear();
         for (var i=0; i<masterAppsModel.length; i++)
         {
             var jsonObj = JSON.parse (masterAppsModel[i]);
@@ -533,9 +523,9 @@ Rectangle {
         }
 
         // Check for already-running apps on startup
-        for (var i=0; i<appsModel.count; i++)
+        for (var j=0; j<appsModel.count; j++)
         {
-            var appSigString = appsModel.get(i)[appStringKey];
+            var appSigString = appsModel.get(j)[appStringKey];
 
             // new API
             var isRunning = mainWin.isAppRunning(appSigString);
@@ -543,7 +533,7 @@ Rectangle {
 
 
             //isRunningApp signals the indicator to be visible
-            repeaterContainer.itemAt(i).isRunningApp = isRunning;
+            repeaterContainer.itemAt(j).isRunningApp = isRunning;
         }
     }
 
@@ -553,6 +543,35 @@ Rectangle {
 
     ListModel  {
         id: appsModel;
+        onCountChanged: {
+            // console.log('qml->debug->appsModel.count', appsModel.count, cellsLoaded);
+            if (cellsLoaded) {
+                cellsLoaded = false;
+                repeaterContainer.model = undefined;
+                repeaterContainer.model = appsModel;
+
+                //************************************\\\///
+                calculateTotalWidthNeeded();
+
+                if (isDockOnSide()) {
+                    mainWin.notifyWidthChanged(dockMouseField.height);
+                }
+                else  {
+                    mainWin.notifyHeightChanged(dockMouseField.height);
+                }
+                cellsLoaded = true;
+                origGlobalItemScale = globalItemScale;
+
+                backgroundShelf.anchors.left = repeaterContainer.itemAt(0).left;
+                backgroundShelf.anchors.right = repeaterContainer.itemAt(appsModel.count-1).right;
+                // backgroundShelf.anchors.bottom = parent.bottom;
+
+                //************************************\\\///
+
+
+                cellsLoaded = true;
+            }
+        }
     }
 
     focus: true;
@@ -899,10 +918,7 @@ Rectangle {
             Repeater //anchorDebugLinesRepeater
             {
 
-                //@TODO: loader: only load this if debugEnabled
-
                 id: anchorDebugLinesRepeater;
-                //model: debugEnabled ? appsModel : undefined;
                 model: appsModel;
 
                 Rectangle {
@@ -921,6 +937,7 @@ Rectangle {
             {
                 id: repeaterContainer;
                 model: appsModel;
+
 
                 Component.onCompleted: {
 //                    //console.log("currentMagnificationIndex = " + currentMagnificationIndex);
@@ -950,11 +967,15 @@ Rectangle {
                 }
 
                 delegate: launcherCell
+
+
+                // onModelChanged: {
+                // }
             }
 
             LauncherCellComponent
             {
-                 id: launcherCell
+                id: launcherCell
             }
         }
     }

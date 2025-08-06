@@ -68,7 +68,7 @@ Component
 //            PauseAnimation {duration: 100; }
 //            NumberAnimation { target: upperRect; property: "border.width"; to: 3; duration: 800; }
             NumberAnimation { target: changingIconIndicator; property: "opacity"; to: 1; duration: 800; }
-            PauseAnimation {duration: 200; }
+            PauseAnimation  { duration: 200; }
             NumberAnimation { target: changingIconIndicator; property: "opacity"; to: 0; duration: 800; }
         }
 
@@ -89,13 +89,13 @@ Component
                 {
                     // console.log("2nd stage width animation finishd: Destroy myself now ! index = " + index);
                     var indexOfItemToRemove = index;
+
                     appsModel.remove(indexOfItemToRemove);
                     // console.log("after appsModel.remove(indexOfItemToRemove); called");
                     // the mainWin cpp comp is not accessible here so we need the private property mainWin_ in the animatoin component
                     //mainWin.itemRemoved(indexOfItemToRemove);
                     mainWin_.itemRemoved(indexOfItemToRemove);
                     // console.log("after mainWin.itemRemoved called");
-                    // calculateTotalWidthNeeded();
                     calculateTotalWidthNeeded_();
                 }
             }
@@ -433,7 +433,7 @@ Component
                               Also last cell is trash which will not be draggable or removable!
                           *********************************************************************/
             {
-                ((model.index == 0) || (model.index == appsModel.count-1) || rightPressOnCell) ? undefined : parent;
+                ((model.index === 0) || (model.index === appsModel.count-1) || rightPressOnCell) ? undefined : parent;
             }
 
             drag.axis: Drag.XandYAxis

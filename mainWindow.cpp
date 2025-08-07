@@ -1405,7 +1405,8 @@ void MainWindow::openParentFolder(const QString &appSignatureString)
 
     entry_ref ref;
     status_t stat = be_roster->FindApp(appSignatureString.toLatin1().data(), &ref);
-    QProcess *process = new QProcess(this);
+
+    std::string cmd = "/bin/open '";
 
     if (stat == B_OK)
     {
@@ -1413,19 +1414,25 @@ void MainWindow::openParentFolder(const QString &appSignatureString)
         myBEntry.GetParent(&myBEntry);
         BPath P;
         myBEntry.GetPath(&P);
-//        printf("openParentFolder: P.Path() is: %s\n", P.Path());
+        qDebug() << "P.Path() is:" << QString(P.Path());
 
-        process->startDetached("open \"" + QString(P.Path()) + "\"");
+        // system("/bin/open '/boot/home/Desktop'");
+        // std::string cmd = "/bin/open '";
+        cmd += P.Path();
     }
     else //probably not an app but a regular file or directory
     {
-        QFileInfo fileInfo(appSignatureString);
-        if (fileInfo.exists()) {
-            QDir containingDir = fileInfo.dir();
-            QString parentPathString = containingDir.path();
-            process->startDetached("open " + parentPathString);
+        BPath P(appSignatureString.toLatin1().data());
+        if (P.InitCheck() != B_OK) {
+            qDebug() << "couldn't open" << appSignatureString.toLatin1().data();
+            return;
         }
+
+        cmd += P.Path();
     }
+
+    cmd += "'";
+    system(cmd.c_str());
 }
 
 void MainWindow::MessageReceived (BMessage *message)

@@ -278,13 +278,19 @@ Rectangle
                             var indexOfItemForParentFolder = indexForAnchoredItemAtX(currentX);
                             var appSigString = appsModel.get(indexOfItemForParentFolder)[appStringKey];
                            // console.log("call openParentFolder for app: " + appSigString);
-                            if (appSigString.startsWith("/") && appSigString.length > 1) {
-                                const finalPath = appSigString.split("/");
-                                finalPath.pop();
-                                mainWin.openFolder(finalPath.join("/"));
-                            }
-                            else if (appSigString === "/") {
+                            if (appSigString === "/") {
                                 mainWin.openFolder(appSigString);
+                            }
+                            else if (appSigString.startsWith("/")) {
+                                const finalPath = appSigString.split("/");
+                                if (finalPath.length === 2) {
+                                    //parent must be root "/"
+                                    mainWin.openFolder("/");
+                                }
+                                else {
+                                    finalPath.pop();
+                                    mainWin.openFolder(finalPath.join("/"));
+                                }
                             }
                             else {
                                 mainWin.openParentFolder(appSigString);

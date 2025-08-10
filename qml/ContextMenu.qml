@@ -237,7 +237,7 @@ Rectangle
                         //console.log("context menu click = " + menuTextItem.text);
 //                        fadeOutAnimation_.start();
 
-                        if (menuTextItem.text == "Remove from Dock")
+                        if (menuTextItem.text === "Remove from Dock")
                         {
                             var indexOfItemToRemove = indexForAnchoredItemAtX(currentX);
 
@@ -250,7 +250,7 @@ Rectangle
                             itemToFade.fadeAndRemoveAnimation.start();
                         }
 
-                        if (menuTextItem.text == "Add new Launcher here")
+                        if (menuTextItem.text === "Add new Launcher here")
                         {
                             var indexOfItemToAdd = indexForAnchoredItemAtX(currentX);
 
@@ -259,7 +259,7 @@ Rectangle
                             mainWin.addNewItemAt(indexOfItemToAdd);
                         }
 
-                        if (menuTextItem.text == "Change Icon Image")
+                        if (menuTextItem.text === "Change Icon Image")
                         {
                             var indexOfItem = indexForAnchoredItemAtX(currentX);
 
@@ -273,32 +273,43 @@ Rectangle
 //                            var itemToHighlight = repeaterContainer.itemAt(indexForAnchoredItemAtX(currentX));
 //                            itemToHighlight.setChangingIcon(yes);
                         }
-                        if (menuTextItem.text == strShowInTracker)
+                        if (menuTextItem.text === strShowInTracker)
                         {
-                            var indexOfItem = indexForAnchoredItemAtX(currentX);
-                            var appSigString = appsModel.get(indexOfItem)[appStringKey];
+                            var indexOfItemForParentFolder = indexForAnchoredItemAtX(currentX);
+                            var appSigString = appsModel.get(indexOfItemForParentFolder)[appStringKey];
                            // console.log("call openParentFolder for app: " + appSigString);
-                            mainWin.openParentFolder(appSigString);
+                            if (appSigString.startsWith("/") && appSigString.length > 1) {
+                                const finalPath = appSigString.split("/");
+                                finalPath.pop();
+                                mainWin.openFolder(finalPath.join("/"));
+                            }
+                            else if (appSigString === "/") {
+                                mainWin.openFolder(appSigString);
+                            }
+                            else {
+                                mainWin.openParentFolder(appSigString);
+                            }
+
                         }
 
-                        if (menuTextItem.text == strHideAll)
+                        if (menuTextItem.text === strHideAll)
                         {
                             doShowHideCloseForTeam(hideAll);
                         }
-                        if (menuTextItem.text == strShowAll)
+                        if (menuTextItem.text === strShowAll)
                         {
                             doShowHideCloseForTeam(showAll);
                         }
-                        if (menuTextItem.text == strQuit)
+                        if (menuTextItem.text === strQuit)
                         {
                             doShowHideCloseForTeam(closeAll);
                         }
-                        if (menuTextItem.text == strLaunchNewInstance)
+                        if (menuTextItem.text === strLaunchNewInstance)
                         {
                             var itemToMultiLaunch = repeaterContainer.itemAt(indexForAnchoredItemAtX(currentX));
                             itemToMultiLaunch.triggerLaunchApp();
                         }
-                        if (menuTextItem.text == strMoreOptions)
+                        if (menuTextItem.text === strMoreOptions)
                         {
                             /*contextMenuContainer.*/triggerOptionsDialog();
                         }

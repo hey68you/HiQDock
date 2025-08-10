@@ -496,7 +496,16 @@ Component
 
                 //console.log("onClicked: " + model.index + " appSig = " + appsModel.get(model.index)[appStringKey]);
 
-                mainWin.launch(appsModel.get(model.index)[appStringKey]);
+                const launchString = appsModel.get(model.index)[appStringKey];
+                const isFolder = launchString.startsWith("/");
+
+                if (isFolder) {
+                    mainWin.openFolder(launchString);
+                }
+                else {
+                    mainWin.launch(launchString);
+                }
+
                 bounceAnimation.start();
             }
 

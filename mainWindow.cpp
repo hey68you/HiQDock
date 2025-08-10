@@ -823,20 +823,28 @@ int MainWindow::moveItems(int fromIndex, int toIndex)
     return fromIndex*toIndex;
 }
 
+void MainWindow::openFolder(const QString &folderPath) {
+
+    std::string cmd = "/bin/open '";
+
+    BPath P(folderPath.toLatin1().data());
+    if (P.InitCheck() != B_OK) {
+        qDebug() << "couldn't open" << folderPath.toLatin1().data();
+        return;
+    }
+
+    cmd += P.Path();
+
+    cmd += "'";
+    system(cmd.c_str());
+}
+
 void MainWindow::launch(const QString &appSignatureString)
 {
     qDebug() << "got request to launch " + appSignatureString + "<->" + appSignatureString.toLatin1().data(); //name;
-//    roster_->Launch(appSignatureString.toLatin1().data());
-
-    // QProcess *process = new QProcess(this);
-	// process->startDetached("open application/x-vnd.Haiku-StyledEdit");
-    // process->startDetached("open " + appSignatureString);
-	
-	// entry_ref ref;
-
     status_t stat = B_NO_INIT;
 
-	stat = be_roster->Launch(appSignatureString.toLatin1().data()/*, &ref */);
+    stat = be_roster->Launch(appSignatureString.toLatin1().data()/*, &ref */);
 	
 	if (stat == B_OK) {
 		qDebug() << "launched: " << appSignatureString;

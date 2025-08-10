@@ -108,6 +108,7 @@ class MainWindow : public QMainWindow
         Q_INVOKABLE bool isMultiLaunch(const QString &appSignatureString);
         Q_INVOKABLE int  moveItems(int fromIndex, int toIndex);
         Q_INVOKABLE void launch(const QString &appSignatureString);
+        Q_INVOKABLE void openFolder(const QString &folderPath);
         Q_INVOKABLE void itemRemoved(int indexRemoved);
         Q_INVOKABLE void addNewItemAt(int indexToAddNewItem);
         Q_INVOKABLE void setIconImageForItemAt(int indexOfItem);

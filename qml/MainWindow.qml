@@ -872,12 +872,18 @@ Rectangle {
                 }
 
                 tipString: {
+
                     var cellData = appsModel.get(indexForAnchoredItemAtX(currentX));
 
+                    if (cellData[appStringKey] === "/") {
+                        return "Disks"
+                    }
                     if (cellData === undefined)
                     {
                         return "";
                     }
+
+
                     return cellData[toolTipKey];
                 }
 

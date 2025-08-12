@@ -41,6 +41,7 @@
 import QtQuick 2.5
 import Qt.labs.folderlistmodel
 import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 Rectangle {
 
@@ -66,13 +67,17 @@ Rectangle {
 
     //http://stackoverflow.com/questions/11359854/update-listview-showin-in-tab-bar-layout-qml
     property variant folderModel
+
     function updateModel() {
-        var currentFolder = ""
+        var currentFolder = "";
         if (folderModel) {
-            currentFolder = folderModel.folder
+            currentFolder = JSON.stringify(folderModel.folder);
+            currentFolder = currentFolder.replaceAll('"', "");
+            // console.log('qml->debug->currentFolder', currentFolder);
             folderModel.destroy();
+
         }
-        folderModel = modelComponent.createObject(iconPickerTopLevelView, {"folder": ((currentFolder == "") || (currentFolder == undefined)) ? "file://" + iconPickerInitialFolder : currentFolder})
+        folderModel = modelComponent.createObject(iconPickerTopLevelView, {"folder": ((currentFolder === "") || (currentFolder === undefined)) ? "file://" + iconPickerInitialFolder : currentFolder})
     }
 
     Component {
@@ -90,11 +95,16 @@ Rectangle {
             showDotAndDotDot: false;
 
             onFolderChanged: {
-//                console.log("on folder change signal-handler in QML! new folder = " + folderModel.folder);
-//                console.log("on folder change signal-handler in QML! starting = " + iconPickerInitialFolder);
-//                showDotAndDotDot =  (folderModel.folder == ("file://" + iconPickerInitialFolder)) ? false : true;
-                // console.log('qml-debug->folderModel.folder', folderModel.folder);
-                showDotAndDotDot = ((folderModel === undefined) || (folderModel.folder === undefined) || (folderModel.folder === ("file://" + iconPickerInitialFolder))) ? false : true;
+                let atTopLevel = false;
+                if (folderModel.folder) {
+                    // console.log('qml-debug->JSON.stringify(folderModel.parentFolder)', JSON.stringify(folderModel.parentFolder));
+                    const fullUserSettingsPath = `"file://${userSettingsPath}"`;
+                    // console.log('qml-debug->fullUserSettingsPath', fullUserSettingsPath);
+                    atTopLevel = JSON.stringify(folderModel.parentFolder) === fullUserSettingsPath;
+                }
+
+                // console.log('qml-debug->atTopLevel', atTopLevel);
+                showDotAndDotDot = ((folderModel === undefined) || (folderModel.folder === undefined) || atTopLevel) ? false : true;
             }
         }
     }
@@ -319,6 +329,7 @@ Rectangle {
                 }
             }
         }
+
         Rectangle
         {
             id: refreshButton
@@ -371,9 +382,23 @@ Rectangle {
                 }
             }
         }
+
+        Button {
+            text: "Jump to top ^";
+            onClicked: scroller.ScrollBar.vertical.position = 0;
+
+            anchors {
+                right:   refreshButton.left
+                top:     parent.top
+                bottom:  parent.bottom
+                margins: 6
+            }
+        }
     }
 
     ScrollView {
+
+        id: scroller;
 
         anchors {
             top:    topBar.bottom
@@ -389,6 +414,9 @@ Rectangle {
                 snapMode: ScrollBar.NoSnap
                 stepSize: 5.0
             }
+
+            focus: true;
+            keyNavigationWraps: true;
 
             // anchors {
             //     top:    parent.bottom

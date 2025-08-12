@@ -700,6 +700,7 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
 	QString pathAsString(userSettingsPath.Path()); 
 
 //    pickerView->rootContext()->setContextProperty("iconPickerInitialFolder", QDir::currentPath() + "/" + iconsFolder);
+    pickerView->rootContext()->setContextProperty("userSettingsPath", pathAsString);
     pickerView->rootContext()->setContextProperty("iconPickerInitialFolder", pathAsString + "/" + iconsFolder);
     pickerView->rootContext()->setContextProperty("launcherToolTip", getStringValueFromJSON(toolTipKey, dataList.at(indexOfItem)));
     pickerView->rootContext()->setContextProperty("originalIconImageSource", getIconBase64UriForFile(getStringValueFromJSON(appStringKey, dataList.at(indexOfItem))));

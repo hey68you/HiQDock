@@ -1,7 +1,7 @@
 // #include <QDeclarativeView>
 #include <QQmlContext>
 #include <QQuickItem>
-#include <QQuickView>
+// #include <QQuickView>
 #include <QApplication>
 #include <QWidget>
 #include <QQuickWidget>
@@ -664,12 +664,12 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
 //NEW
 
     // QDeclarativeView *pickerView = NULL;
-    QQuickView *pickerView = NULL;
+    // QQuickView *pickerView = NULL;
 
     if (iconPickerWin_ != NULL)
     {
-        // pickerView = dynamic_cast<QDeclarativeView*>(iconPickerWin_->centralWidget());
-        pickerView = dynamic_cast<QQuickView*>(iconPickerWin_->centralWidget());
+        // // pickerView = dynamic_cast<QDeclarativeView*>(iconPickerWin_->centralWidget());
+        // pickerView = dynamic_cast<QQuickView*>(iconPickerWin_->centralWidget());
 
         pickerView->rootContext()->setContextProperty("launcherToolTip", getStringValueFromJSON(toolTipKey, dataList.at(indexOfItem)));
         pickerView->rootContext()->setContextProperty("originalIconImageSource", getIconBase64UriForFile(getStringValueFromJSON(appStringKey, dataList.at(indexOfItem))));
@@ -690,7 +690,7 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
 
 // //    QDeclarativeView *pickerView = new QDeclarativeView;
 //     pickerView = new QDeclarativeView;
-     pickerView = new QQuickView;
+    pickerView = new QQuickView;
 
 
 //    qDebug() << "QDir::currentPath() + / iconsFolder =  " << QDir::homePath() << "/" << iconsFolder;

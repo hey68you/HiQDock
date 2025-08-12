@@ -33,6 +33,7 @@
 #include <FilePanel.h>
 #include <QPixmap>
 #include <QMainWindow>
+#include <QQuickView>
 #include <Roster.h>
 //#include <QDialog>
 #include <QSystemTrayIcon>
@@ -183,6 +184,7 @@ class MainWindow : public QMainWindow
         BFilePanel       *fPanelOpen;
 //        QMainWindow      *iconPickerWin_;
         HQDDialogWindow  *iconPickerWin_;
+        QQuickView       *pickerView;
         QMainWindow      *prefsDialogWin_;
         int              itemWidth;
         int              minItemSize;

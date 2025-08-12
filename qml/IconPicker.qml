@@ -40,6 +40,7 @@
 
 import QtQuick 2.5
 import Qt.labs.folderlistmodel
+import QtQuick.Controls
 
 Rectangle {
 
@@ -372,7 +373,7 @@ Rectangle {
         }
     }
 
-    GridView {
+    ScrollView {
 
         anchors {
             top:    topBar.bottom
@@ -381,17 +382,34 @@ Rectangle {
             bottom: parent.bottom
         }
 
-        anchors.margins: 10
+        GridView {
 
-        cellWidth: gridItemSize; cellHeight: gridItemSize
-//        focus: true
-//        model: folderModel
-        model: iconPickerTopLevelView.folderModel
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AlwaysOn
+                snapMode: ScrollBar.NoSnap
+                stepSize: 5.0
+            }
 
-        clip: true;
+            // anchors {
+            //     top:    parent.bottom
+            //     right:  parent.right
+            //     left:   parent.left
+            //     bottom: parent.bottom
+            // }
 
-        delegate: appDelegate
+            // anchors.margins: 10
 
+            cellWidth: gridItemSize; cellHeight: gridItemSize
+    //        focus: true
+    //        model: folderModel
+            model: iconPickerTopLevelView.folderModel
+
+            clip: true;
+            snapMode: GridView.NoSnap;
+
+            delegate: appDelegate
+
+        }
     }
 
     Component.onCompleted: {

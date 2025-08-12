@@ -875,7 +875,7 @@ Rectangle {
 
                     var cellData = appsModel.get(indexForAnchoredItemAtX(currentX));
 
-                    if (cellData[appStringKey] === "/") {
+                    if (cellData?.[appStringKey] === "/") {
                         return "Disks"
                     }
                     if (cellData === undefined)

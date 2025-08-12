@@ -80,7 +80,7 @@ QBeLooper::~QBeLooper(){}
 
 void QBeLooper::MessageReceived(BMessage *msg)
 {
-    qDebug() << "QBeLooper::MessageReceived";
+    // qDebug() << "QBeLooper::MessageReceived";
 
 	switch(msg->what) {
         case M_SET_LAUNCHER_APP:
@@ -90,7 +90,7 @@ void QBeLooper::MessageReceived(BMessage *msg)
         case B_SOME_APP_ACTIVATED:
 		{
 //            printf("Launched, Quit or AppActivated: Yay msg rec'd\n");
-            qDebug() << "QBeLooper::MessageReceived (B_SOME_APP_ACTIVATED)";
+            // qDebug() << "QBeLooper::MessageReceived (B_SOME_APP_ACTIVATED)";
             theMainWindow_->MessageReceived(msg);
 			break;
 		}
@@ -686,6 +686,7 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
     }
 
     iconPickerWin_ = new HQDDialogWindow();
+    // iconPickerWin_ = new HQDDialogWindow(0, /*Qt::SubWindow*/Qt::Tool);
     iconPickerWin_->setWindowTitle("HiQDock - Set New Icon");
 
 // //    QDeclarativeView *pickerView = new QDeclarativeView;
@@ -717,7 +718,7 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
 
     // iconPickerWin_->setCentralWidget(pickerView);
     iconPickerWin_->setCentralWidget(container);
-    iconPickerWin_->setWindowModality(Qt::WindowModal);
+    iconPickerWin_->setWindowModality(Qt::ApplicationModal);
 	
 	QRect availGeom = screen->availableGeometry();
 
@@ -729,8 +730,8 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
     // pickWinRect.moveCenter(QApplication::desktop()->availableGeometry().center());
     // iconPickerWin_->setGeometry(pickWinRect);
 	
-	iconPickerWin_->setMinimumSize(availGeom.width() - padding, availGeom.height() - padding);
-    iconPickerWin_->setMaximumSize(availGeom.width() - padding, availGeom.height() - padding);
+    iconPickerWin_->setMinimumSize(availGeom.width() - padding, availGeom.height() - padding);
+ //    iconPickerWin_->setMaximumSize(availGeom.width() - padding, availGeom.height() - padding);
     QRect pickWinRect = iconPickerWin_->geometry();
     pickWinRect.moveCenter(availGeom.center());
     iconPickerWin_->setGeometry(pickWinRect);

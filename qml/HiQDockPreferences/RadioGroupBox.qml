@@ -21,18 +21,19 @@ Rectangle {
                 width:       topLevelRadioBox.width/radioButtonValues.count + 5;
 
                 onRadioClicked: {
-//                    console.log("chckBoxRadioBottomPos clicked: " + model.index + ": " + radioButtonValues.count)
+                   // console.log("chckBoxRadioBottomPos clicked: " + model.index + ": " + radioButtonValues.count)
 
-                    if (radioButtonValues.get(model.index).isSelected == false)
+                    if (radioButtonValues.get(model.index).isSelected === false)
                     {
                         for (var i=0; i<radioButtonValues.count; i++)
                         {
                             //clear all other buttons
-                            radioButtonValues.get(i).isSelected = false;
+                            radioButtonsModel.setProperty(i, "isSelected", false);
                         }
 
-                        radioButtonValues.get(model.index).isSelected = true;
+                        radioButtonsModel.setProperty(model.index, "isSelected", true);
                         newOptionSelected(model.index);
+
 
                     }
                 }

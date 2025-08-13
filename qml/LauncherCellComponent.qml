@@ -527,7 +527,7 @@ Component
             }
 
 
-            onPressed: {
+            onPressed: (mouse) => {
 
                 //console.log("onPressed");
 

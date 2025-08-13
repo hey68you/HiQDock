@@ -151,11 +151,12 @@ Rectangle {
 //            valuePercent: 64/96; //0.8;
             valuePercent: itemWidth/maxItemSize; //0.8;
 
-            onValueUpdated: {
+            onValueUpdated: (newValuePercent) => {
                 //console.log("new Size should be (percent): " + newValuePercent);
                 valueForSizeUpdated(newValuePercent);
             }
-            onDragingStarted: {
+
+            onDragingStarted: (isDragging) => {
                 //console.log("notify dragging (started): " + isDragging);
                 sizeDraggingInProgress(isDragging);
             }
@@ -178,7 +179,7 @@ Rectangle {
 
             property double currentMagnificationSliderValue: 0;
 
-            onValueUpdated: {
+            onValueUpdated: (newValuePercent) => {
                 //console.log("new Magnification should be (percent): " + newValuePercent);
                 //round up trick; in c++ this is cast to an integer
                 currentMagnificationSliderValue = newValuePercent+0.05;
@@ -187,7 +188,7 @@ Rectangle {
 //                currentMagnificationSliderValue = Math.max(0,currentMagnificationSliderValue);
             }
 
-            onDragingStarted: {
+            onDragingStarted: (isDragging) => {
                 //console.log("sliderMagnification: notify dragging (started): " + isDragging + ", currentMagnificationSliderValue = " + currentMagnificationSliderValue);
                 if (isDragging == false) {
                     valueForMagnificationUpdated(currentMagnificationSliderValue);
@@ -212,16 +213,17 @@ Rectangle {
             height: 50
             radioButtonValues: radioButtonsModel
 
-            onNewOptionSelected: {
+            onNewOptionSelected: (selectedIndex) => {
                 //console.log("newOptionSelected = " + selectedIndex + ": " + radioButtonsModel.get(selectedIndex).label);
                 setNewScreenPosition(selectedIndex);
             }
 
+
             Component.onCompleted: {
-                radioButtonsModel.append({"label": "Left",   "isSelected":   (currentDockScreenPosition==screenPosition.left)});
-                radioButtonsModel.append({"label": "Bottom", "isSelected":   (currentDockScreenPosition==screenPosition.bottom)});
-                radioButtonsModel.append({"label": "Right",  "isSelected":   (currentDockScreenPosition==screenPosition.right)});
-                radioButtonsModel.append({"label": "Top",    "isSelected":   (currentDockScreenPosition==screenPosition.top)});
+                radioButtonsModel.append({"label": "Left",   "isSelected":   (currentDockScreenPosition===screenPosition.left)});
+                radioButtonsModel.append({"label": "Bottom", "isSelected":   (currentDockScreenPosition===screenPosition.bottom)});
+                radioButtonsModel.append({"label": "Right",  "isSelected":   (currentDockScreenPosition===screenPosition.right)});
+                radioButtonsModel.append({"label": "Top",    "isSelected":   (currentDockScreenPosition===screenPosition.top)});
              }
         }
 

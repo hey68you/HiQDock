@@ -291,8 +291,22 @@ Rectangle {
         iconResizingInProgress = no;
     }
 
-    function notifyApplistModified_SLOT()
-    {
+    function checkIfAppsRunning () {
+        for (var j=0; j<appsModel.count; j++)
+        {
+            var appSigString = appsModel.get(j)[appStringKey];
+
+            // new API
+            var isRunning = mainWin.isAppRunning(appSigString);
+//            //console.log(appSigString + " in QML isRunning = " + isRunning);
+
+
+            //isRunningApp signals the indicator to be visible
+            repeaterContainer.itemAt(j).isRunningApp = isRunning;
+        }
+    }
+
+    function afterModelChanged() {
         cellsLoaded = false;
 
         //needed when move items around in the dock
@@ -316,9 +330,14 @@ Rectangle {
         // backgroundShelf.anchors.bottom = parent.bottom;
 
         //************************************\\\///
-
-
         cellsLoaded = true;
+
+        checkIfAppsRunning();
+    }
+
+    function notifyApplistModified_SLOT()
+    {
+        afterModelChanged();
     }
 
     function updateNewScreenPosition_SLOT(newScreenPosition)
@@ -544,19 +563,7 @@ Rectangle {
             appsModel.append(jsonObj);
         }
 
-        // Check for already-running apps on startup
-        for (var j=0; j<appsModel.count; j++)
-        {
-            var appSigString = appsModel.get(j)[appStringKey];
-
-            // new API
-            var isRunning = mainWin.isAppRunning(appSigString);
-//            //console.log(appSigString + " in QML isRunning = " + isRunning);
-
-
-            //isRunningApp signals the indicator to be visible
-            repeaterContainer.itemAt(j).isRunningApp = isRunning;
-        }
+        checkIfAppsRunning();
     }
 
 //    onContextMenuWasShownChanged: {
@@ -568,30 +575,7 @@ Rectangle {
         onCountChanged: {
             // console.log('qml->debug->appsModel.count', appsModel.count, cellsLoaded);
             if (cellsLoaded) {
-                cellsLoaded = false;
-                repeaterContainer.model = undefined;
-                repeaterContainer.model = appsModel;
-
-                //************************************\\\///
-                calculateTotalWidthNeeded();
-
-                if (isDockOnSide()) {
-                    mainWin.notifyWidthChanged(dockMouseField.height);
-                }
-                else  {
-                    mainWin.notifyHeightChanged(dockMouseField.height);
-                }
-                cellsLoaded = true;
-                origGlobalItemScale = globalItemScale;
-
-                backgroundShelf.anchors.left = repeaterContainer.itemAt(0).left;
-                backgroundShelf.anchors.right = repeaterContainer.itemAt(appsModel.count-1).right;
-                // backgroundShelf.anchors.bottom = parent.bottom;
-
-                //************************************\\\///
-
-
-                cellsLoaded = true;
+                afterModelChanged();
             }
         }
     }

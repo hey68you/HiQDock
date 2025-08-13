@@ -22,6 +22,7 @@ Component
 
         property SequentialAnimation fadeAndRemoveAnimation: fadeAndRemoveAnimation_;
         property Repeater            anchoredRepeater_:     anchoredRepeater;
+        property int                 moveToIndex:          -1;
 
         signal setChangingIcon(bool changingIcon);
         signal triggerLaunchApp();
@@ -32,7 +33,6 @@ Component
         //        console.log('qml-debug->connections: pathToIcon', pathToIcon, 'indexOfItem', indexOfItem);
         //    }
         // }
-
 
         onTriggerLaunchApp:
         {
@@ -577,7 +577,7 @@ Component
 //                    //console.log("after move: " + masterAppsModel);
                 }
 
-                moveToIndex = -1;
+                oneItem.moveToIndex = -1;
             }
         }
     }

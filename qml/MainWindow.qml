@@ -77,8 +77,6 @@ Rectangle {
 
     property bool    contextMenuWasShown:  no;
 
-    property int     moveToIndex:          -1;
-
 //    property bool    newYosemiteBottomStyle: yes//no;
 
     /*********************************************************************************\
@@ -295,9 +293,32 @@ Rectangle {
 
     function notifyApplistModified_SLOT()
     {
+        cellsLoaded = false;
+
         //needed when move items around in the dock
         repeaterContainer.model = undefined;
         repeaterContainer.model = appsModel;
+
+        //************************************\\\///
+        calculateTotalWidthNeeded();
+
+        if (isDockOnSide()) {
+            mainWin.notifyWidthChanged(dockMouseField.height);
+        }
+        else  {
+            mainWin.notifyHeightChanged(dockMouseField.height);
+        }
+        cellsLoaded = true;
+        origGlobalItemScale = globalItemScale;
+
+        backgroundShelf.anchors.left = repeaterContainer.itemAt(0).left;
+        backgroundShelf.anchors.right = repeaterContainer.itemAt(appsModel.count-1).right;
+        // backgroundShelf.anchors.bottom = parent.bottom;
+
+        //************************************\\\///
+
+
+        cellsLoaded = true;
     }
 
     function updateNewScreenPosition_SLOT(newScreenPosition)

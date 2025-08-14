@@ -8,6 +8,7 @@
 #include <Messenger.h>
 #include <Application.h>
 //#include <QGraphicsBlurEffect>
+#include <QLoggingCategory>
 
 #include "mainWindow.h"
 
@@ -85,6 +86,10 @@
 int main(int argc, char *argv[])
 {
     //Q_INIT_RESOURCE(application);
+
+#ifdef QT_NO_DEBUG_OUTPUT
+    QLoggingCategory::setFilterRules("qml=false");
+#endif
 
     QApplication app(argc, argv);
 //    QBeApplication app(argc, argv);

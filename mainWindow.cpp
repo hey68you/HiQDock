@@ -318,8 +318,8 @@ MainWindow::MainWindow()
 	//screen = QGuiApplication::primaryScreen();
 	
     QRect  screenGeometry = screen->geometry();
-    double windowMaxWidth = screenGeometry.height();
-    double windowMaxHeight = screenGeometry.width();
+    double windowMaxWidth = screenGeometry.width();
+    double windowMaxHeight = screenGeometry.height();
 
     view->rootContext()->setContextProperty("windowMaxWidth", QVariant::fromValue(windowMaxWidth));
     view->rootContext()->setContextProperty("windowMaxHeight", QVariant::fromValue(windowMaxHeight));
@@ -525,6 +525,9 @@ void MainWindow::Activate()
 //            }
         }
     }
+    else {
+        qDebug() << "MainWindow::Activate beWin_ is NULL ?!!";
+    }
 }
 
 void MainWindow::MouseOutside()
@@ -688,6 +691,7 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
     iconPickerWin_ = new HQDDialogWindow();
     // iconPickerWin_ = new HQDDialogWindow(0, /*Qt::SubWindow*/Qt::Tool);
     iconPickerWin_->setWindowTitle("HiQDock - Set New Icon");
+    // iconPickerWin_->setAttribute(Qt::WA_DeleteOnClose);
 
 // //    QDeclarativeView *pickerView = new QDeclarativeView;
 //     pickerView = new QDeclarativeView;
@@ -800,7 +804,7 @@ bool MainWindow::isAppRunning(const QString &appSignatureString)
     BList *teams = new BList;
     be_roster->GetAppList(appSignatureString.toLatin1().data(), teams);
 
-    qDebug() << "isAppRunning called - list count = " << teams->CountItems();
+    // qDebug() << "isAppRunning called - list count = " << teams->CountItems();
 
     return (teams->CountItems() > 0);
 }
@@ -1132,8 +1136,14 @@ void MainWindow::notifySetNewScreenPosition(int newPosition)
     emit updateNewScreenPosition(newPosition);
 
     if (orientationWillChange) {
-        qDebug() << "going to flip resize window: ";
+        qDebug() << "going to flip resize window: h x w" << size().height() << "x" << size().width();
         resize( QSize( size().height(), size().width() ) );
+        BWindow *beWin_ = be_app->WindowAt(0);
+        if (beWin_ == NULL)
+        {
+            beWin_ = be_app->WindowAt(0);
+        }
+        beWin_->ResizeTo(size().height(), size().width());
     }
     else {
         qDebug() << "NOT resizing window!";
@@ -1153,28 +1163,40 @@ void MainWindow::moveScreenToPosition(int newPosition)
     QSize screenSize(screenRect.width() + 1, screenRect.height() + 1);
     ///////////////////////////////////////////////////////////////////
 
+    BWindow *beWin_ = be_app->WindowAt(0);
+    // if (beWin_ == NULL)
+    // {
+    //     beWin_ = be_app->WindowAt(0);
+    // }
+
     switch ( newPosition )
 	{
         case SCREEN_POSITION_LEFT:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_LEFT";
             move(   QPoint(0, (screenSize.height()  - size().height())/2) );
+            beWin_->MoveTo(0, (screenSize.height()  - size().height())/2);
 			break;
         case SCREEN_POSITION_BOTTOM:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_BOTTOM";
             move(   QPoint((screenSize.width() - size().width())/2,  screenSize.height()  - size().height()) );
+            beWin_->MoveTo((screenSize.width() - size().width())/2,  screenSize.height()  - size().height()) ;
             break;
         case SCREEN_POSITION_RIGHT:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_RIGHT";
             move(   QPoint(screenSize.width() - size().width(), (screenSize.height() - size().height())/2) );
+            beWin_->MoveTo( screenSize.width() - size().width(), (screenSize.height() - size().height())/2) ;
             break;
         case SCREEN_POSITION_TOP:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_TOP";
             move(   QPoint((screenSize.width() - size().width())/2, 0) );
+            beWin_->MoveTo((screenSize.width() - size().width())/2, 0) ;
             break;
         default:
             qDebug() << "moveScreenToPosition: how did we get here? screen position not recognized";
             break;
     }
+
+        beWin_->Activate();
 }
 
 void MainWindow::notifyNewItemWidth(int newItemWidth)
@@ -1199,6 +1221,12 @@ void MainWindow::notifyWidthChanged(int newWidth)
         }
     }
 
+    BWindow *beWin_ = be_app->WindowAt(0);
+    // if (beWin_ == NULL)
+    // {
+    //     beWin_ = be_app->WindowAt(0);
+    // }
+    beWin_->ResizeTo(newWidth, size().height());
     resize( QSize( newWidth, size().height() ) );
     moveScreenToPosition(currentDockScreenPosition);
 }
@@ -1753,6 +1781,17 @@ void MainWindow::writeSettings()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    qDebug() << "closeEvent";
     writeSettings();
+
+    if (iconPickerWin_ != NULL) {
+        iconPickerWin_->close();
+        iconPickerWin_->deleteLater();
+    }
+
+    if (prefsDialogWin_ != NULL) {
+        prefsDialogWin_->close();
+        prefsDialogWin_->deleteLater();
+    }
     event->accept();
 }

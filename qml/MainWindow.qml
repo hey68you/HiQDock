@@ -261,9 +261,9 @@ Rectangle {
 
             if (newItemSize*appsModel.count > currentMaxWidth)
             {
-                //console.log("newItemSize too big for screen width");
                 var maxNewItemWidth = currentMaxWidth/appsModel.count;
                 if (newItemSize >= maxNewItemWidth) {
+                    //console.log("qml->debug->newItemSize too big for screen width");
                     return;
                 }
                 else
@@ -395,7 +395,7 @@ Rectangle {
     function calculateTotalWidthNeeded()
     {
 
-       console.log("qml->debug->calculateTotalWidthNeeded->entered appsModel.count", appsModel.count);
+        console.log("qml->debug->calculateTotalWidthNeeded->entered appsModel.count", appsModel.count);
 
         totalWidthCalc = 0;
 
@@ -422,7 +422,7 @@ Rectangle {
 
         fullAppWindow.width = totalWidthCalc*2 + itemWidth*appsModel.count + sidePadding*2 + contextMenu.sideMargin*6;
 
-       console.log("qml->debug->setting fullAppWindow.width to " + fullAppWindow.width);
+        console.log("qml->debug->setting fullAppWindow.width to " + fullAppWindow.width);
 
         if (isDockOnSide())
         {

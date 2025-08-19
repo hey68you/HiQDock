@@ -566,7 +566,7 @@ void MainWindow::loadHaikuMouseTrackingView()
         beWin_->AddChild(mouseTrackingView_);
         mouseTrackingView_->Show();
 //        printf("added mouseTrackingView_ view\n");
-        qDebug() << mouseTrackingView_;
+        qDebug() << "mouseTrackingView_ is there" << mouseTrackingView_;
     }
     else
     {
@@ -1129,6 +1129,27 @@ bool MainWindow::isOrientationChanging(int newPosition)
 
 void MainWindow::notifySetNewScreenPosition(int newPosition)
 {
+    BAlert *alert = new BAlert("Info", "Dock will restart now to apply this change...", "OK");
+    alert->Go();
+
+    system("sleep 1 && /bin/open application/x-vnd.HiQDock-v2 &");
+
+    // return;
+    currentDockScreenPosition = newPosition;
+
+    writeSettings();
+
+    // std::string cmd = "/bin/quit 'application/x-vnd.HiQDock-v2'; sleep 0.25; /bin/open 'application/x-vnd.HiQDock-v2' &";
+    // system(cmd.c_str());
+
+    // BAlert *alert = new BAlert("Info", "Please restart the Dock for your changes to take effect...", "OK");
+    // alert->Go();
+
+    be_app->PostMessage(B_QUIT_REQUESTED);
+    // /*status_t status = */be_roster->Launch("application/x-vnd.HiQDock-v2");
+
+    return;
+
     qDebug() << "notifySetNewScreenPosition: " << newPosition;
     bool orientationWillChange = isOrientationChanging(newPosition);
     currentDockScreenPosition = newPosition;
@@ -1137,19 +1158,15 @@ void MainWindow::notifySetNewScreenPosition(int newPosition)
 
     if (orientationWillChange) {
         qDebug() << "going to flip resize window: h x w" << size().height() << "x" << size().width();
+
         resize( QSize( size().height(), size().width() ) );
-        BWindow *beWin_ = be_app->WindowAt(0);
-        if (beWin_ == NULL)
-        {
-            beWin_ = be_app->WindowAt(0);
-        }
-        beWin_->ResizeTo(size().height(), size().width());
     }
     else {
         qDebug() << "NOT resizing window!";
     }
 
     moveScreenToPosition(currentDockScreenPosition);
+    // moveScreenToPosition(newPosition);
 
     writeSettings();
 }
@@ -1161,6 +1178,12 @@ void MainWindow::moveScreenToPosition(int newPosition)
 
     //@TODO: Haiku screen geometry is off by 1 pixel I think so need to add 1 to width and height
     QSize screenSize(screenRect.width() + 1, screenRect.height() + 1);
+
+
+    // bool orientationWillChange = isOrientationChanging(newPosition);
+    // currentDockScreenPosition = newPosition;
+
+
     ///////////////////////////////////////////////////////////////////
 
     BWindow *beWin_ = be_app->WindowAt(0);
@@ -1173,30 +1196,63 @@ void MainWindow::moveScreenToPosition(int newPosition)
 	{
         case SCREEN_POSITION_LEFT:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_LEFT";
+            // if (orientationWillChange) {
+            //     resize( QSize( size().height(), size().width() ) );
+            // }
+
             move(   QPoint(0, (screenSize.height()  - size().height())/2) );
-            beWin_->MoveTo(0, (screenSize.height()  - size().height())/2);
+
+            // if (orientationWillChange) {
+                beWin_->MoveTo(0, (screenSize.height()  - size().height())/2);
+            // }
 			break;
         case SCREEN_POSITION_BOTTOM:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_BOTTOM";
+
+            // if (orientationWillChange) {
+            //     resize( QSize( size().height(), size().width() ) );
+            // }
+
             move(   QPoint((screenSize.width() - size().width())/2,  screenSize.height()  - size().height()) );
-            beWin_->MoveTo((screenSize.width() - size().width())/2,  screenSize.height()  - size().height()) ;
+
+            // if (orientationWillChange) {
+                beWin_->MoveTo((screenSize.width() - size().width())/2,  screenSize.height() - size().height()) ;
+            // }
+
             break;
         case SCREEN_POSITION_RIGHT:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_RIGHT";
+
+            // if (orientationWillChange) {
+            //     resize( QSize( size().height(), size().width() ) );
+            // }
+
             move(   QPoint(screenSize.width() - size().width(), (screenSize.height() - size().height())/2) );
-            beWin_->MoveTo( screenSize.width() - size().width(), (screenSize.height() - size().height())/2) ;
+            // if (orientationWillChange) {
+                beWin_->MoveTo(screenSize.width() - size().width(), (screenSize.height() - size().height())/2);
+            // }
+            // beWin_->MoveTo( screenSize.width() - size().width(), (screenSize.height() - size().height())/2) ;
             break;
         case SCREEN_POSITION_TOP:
             qDebug() << "moveScreenToPosition: SCREEN_POSITION_TOP";
+
+            // if (orientationWillChange) {
+            //     resize( QSize( size().height(), size().width() ) );
+            // }
+
+
             move(   QPoint((screenSize.width() - size().width())/2, 0) );
-            beWin_->MoveTo((screenSize.width() - size().width())/2, 0) ;
+            // beWin_->MoveTo((screenSize.width() - size().width())/2, 0) ;
+            // if (orientationWillChange) {
+                beWin_->MoveTo((screenSize.width() - size().width())/2, 0);
+            // }
             break;
         default:
             qDebug() << "moveScreenToPosition: how did we get here? screen position not recognized";
             break;
     }
 
-        beWin_->Activate();
+    // beWin_->Activate();
 }
 
 void MainWindow::notifyNewItemWidth(int newItemWidth)
@@ -1222,10 +1278,10 @@ void MainWindow::notifyWidthChanged(int newWidth)
     }
 
     BWindow *beWin_ = be_app->WindowAt(0);
-    // if (beWin_ == NULL)
-    // {
-    //     beWin_ = be_app->WindowAt(0);
-    // }
+    if (beWin_ == NULL)
+    {
+        beWin_ = be_app->WindowAt(0);
+    }
     beWin_->ResizeTo(newWidth, size().height());
     resize( QSize( newWidth, size().height() ) );
     moveScreenToPosition(currentDockScreenPosition);

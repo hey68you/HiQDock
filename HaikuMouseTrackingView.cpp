@@ -10,7 +10,6 @@
 #include <View.h>
 #include <Rect.h>
 #include <Point.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <Window.h>
 #include "HaikuMouseTrackingView.h"
@@ -39,7 +38,8 @@ HaikuMouseTrackingView::MouseMoved(BPoint point, uint32 transit __attribute__((u
     int currentDockPosition = theMainWindow_->getCurrentDockScreenPosition();
 
     //if ((point.y >= windowFrame.bottom) && currentDockPosition == SCREEN_POSITION_BOTTOM)
-    if ((point.y >= windowFrame.bottom - 1) && currentDockPosition == SCREEN_POSITION_BOTTOM)
+    // if ((point.y >= windowFrame.bottom - 1) && currentDockPosition == SCREEN_POSITION_BOTTOM)
+    if ((point.y >= windowFrame.bottom - 3) && currentDockPosition == SCREEN_POSITION_BOTTOM)
     {
         theMainWindow_->Activate();
     }
@@ -48,13 +48,17 @@ HaikuMouseTrackingView::MouseMoved(BPoint point, uint32 transit __attribute__((u
         theMainWindow_->Activate();
     }
     //else if ((point.x >= windowFrame.right) && currentDockPosition == SCREEN_POSITION_RIGHT)
-    else if ((point.x >= windowFrame.right - 1) && currentDockPosition == SCREEN_POSITION_RIGHT)
+    // else if ((point.x >= windowFrame.right - 1) && currentDockPosition == SCREEN_POSITION_RIGHT)
+    else if ((point.x >= windowFrame.right - 3) && currentDockPosition == SCREEN_POSITION_RIGHT)
     {
         theMainWindow_->Activate();
     }
     else if ((point.y <= windowFrame.top) && currentDockPosition == SCREEN_POSITION_TOP)
     {
         theMainWindow_->Activate();
+    }
+    else {
+        // printf("not activating on MouseMoved on HaikuMouseTrackingView x,y,bottom = %f, %f, %f\n", point.x, point.y, windowFrame.bottom);
     }
 }
 

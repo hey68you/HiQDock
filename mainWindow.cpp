@@ -1132,23 +1132,16 @@ void MainWindow::notifySetNewScreenPosition(int newPosition)
     BAlert *alert = new BAlert("Info", "Dock will restart now to apply this change...", "OK");
     alert->Go();
 
-    system("sleep 1 && /bin/open application/x-vnd.HiQDock-v2 &");
-
-    // return;
     currentDockScreenPosition = newPosition;
-
     writeSettings();
 
-    // std::string cmd = "/bin/quit 'application/x-vnd.HiQDock-v2'; sleep 0.25; /bin/open 'application/x-vnd.HiQDock-v2' &";
-    // system(cmd.c_str());
-
-    // BAlert *alert = new BAlert("Info", "Please restart the Dock for your changes to take effect...", "OK");
-    // alert->Go();
+    restartDock();
 
     be_app->PostMessage(B_QUIT_REQUESTED);
-    // /*status_t status = */be_roster->Launch("application/x-vnd.HiQDock-v2");
 
     return;
+
+    //BELOW doesn't work (after upgrading to Qt6) !
 
     qDebug() << "notifySetNewScreenPosition: " << newPosition;
     bool orientationWillChange = isOrientationChanging(newPosition);
@@ -1377,11 +1370,13 @@ void MainWindow::setNewApp(BMessage *message, uint32 messageName __attribute__((
                 {
                     qDebug() << "that app already exists in the dock!";
                     indexWhereToAddNew = INDEX_UNDEFINED;
-                    QMessageBox alertBox;
-                    alertBox.setText("\"" + appFileOrDir + "\" already exists in the dock!");
-                    alertBox.setIcon(QMessageBox::Warning);
-                    alertBox.setModal(true);
-                    alertBox.exec();
+
+                    std::string msg = "The launcher: '";
+                    msg += appFileOrDir.toStdString();
+                    msg += "' already exists in the dock!";
+                    BAlert *alert = new BAlert("Warning", msg.c_str(), "OK");
+                    alert->Go();
+
                     return;
                 }
             }
@@ -1771,6 +1766,40 @@ QString MainWindow::getStringValueFromJSON(const QString &propertyKey, const QSt
     QJSValue objectContents = object.property(propertyKey);
 
     return objectContents.toString();
+}
+
+void MainWindow::restartDock() {
+
+    app_info info;
+    if (be_app->GetAppInfo(&info) != B_OK) {
+        printf("Failed to get app info\n");
+        return;
+    }
+
+    BFile file(&info.ref, B_READ_ONLY);
+    if (file.InitCheck() != B_OK) {
+        printf("Failed to open app file\n");
+        return;
+    }
+
+    BAppFileInfo appFileInfo(&file);
+    char signature[B_MIME_TYPE_LENGTH];
+    if (appFileInfo.GetSignature(signature) != B_OK) {
+        printf("Failed to get app signature\n");
+        return;
+    }
+
+    qDebug() << "and the winner is:" << signature;
+
+    std::string cmd = "sleep 1 && /bin/open ";
+
+    cmd += signature;
+
+    cmd += "&";
+
+    // system("sleep 1 && /bin/open application/x-vnd.HiQDock-v2 &");
+
+    system(cmd.c_str());
 }
 
 void MainWindow::writeSettings()

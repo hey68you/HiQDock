@@ -10,18 +10,15 @@ INCLUDEPATH += .
 LIBS += -lbe
 LIBS += -ltracker
 
-# QT = core gui
-# QT += declarative
-# QT += script
 QT += core gui widgets quickwidgets
 QT += qml quick
-CONFIG += debug
-CONFIG += qml_debug
+# CONFIG += debug
+# CONFIG += qml_debug
 
 
 RESOURCES += HiQDock.qrc
 
-#DEFINES += QT_NO_DEBUG_OUTPUT
+DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
 HEADERS += mainWindow.h \
@@ -32,7 +29,3 @@ SOURCES += main.cpp \
            mainWindow.cpp \
            HQDDialogWindow.cpp \
            HaikuMouseTrackingView.cpp
-
-
-#notifyHeightChanged: got request to resize to new height =  2077
-#notifyHeightChanged - not resizing or moving window

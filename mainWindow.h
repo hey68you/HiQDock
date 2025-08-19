@@ -169,6 +169,7 @@ class MainWindow : public QMainWindow
         void writeSettings();
         bool isOrientationChanging(int newPosition);
         void moveScreenToPosition(int newPosition);
+        void restartDock();
 		
 		BPath userSettingsPath;
 

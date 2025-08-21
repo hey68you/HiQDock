@@ -175,7 +175,7 @@ MainWindow::MainWindow()
     currentMagnificationIndex = 7;
 
     autoRaiseEnabled          = true;
-    autoHideEnabled           = false;
+    autoHideEnabled           = true/*false*/;
     magnificationEnabled      = true;
     sizeSliderDragInProgress  = false;
     showRunningIndicators     = true;

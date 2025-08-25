@@ -190,7 +190,7 @@ Rectangle {
 
             onDragingStarted: (isDragging) => {
                 //console.log("sliderMagnification: notify dragging (started): " + isDragging + ", currentMagnificationSliderValue = " + currentMagnificationSliderValue);
-                if (isDragging == false) {
+                if (isDragging === false) {
                     valueForMagnificationUpdated(currentMagnificationSliderValue);
                 }
             }

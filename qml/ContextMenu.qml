@@ -196,7 +196,7 @@ Rectangle
 
                 id: menuTextItem
 
-                property string thisItemMenuTextString: (menuItems.get(model.index) != undefined) ? menuItems.get(model.index).menuTextString : "";
+                property string thisItemMenuTextString: (menuItems.get(model.index) !== undefined) ? menuItems.get(model.index).menuTextString : "";
 //                property bool   isSeparator:   (menuItems.get(model.index).menuTextString == "--");
 //                property string stringForItem:  menuItems.get(model.index).menuTextString;
                 property bool   isSeparator:   (thisItemMenuTextString == "--");

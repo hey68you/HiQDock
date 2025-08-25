@@ -55,10 +55,12 @@ Rectangle {
 
         x: 0;
 //        width: parent.width - ((isDockOnSide() || newYosemiteBottomStyle) ? (2 * itemWidth) : itemWidth/2);
-        height: (isDockOnSide() || (currentDockScreenPosition==screenPosition.top)|| newYosemiteBottomStyle) ? parent.height + 25: parent.height;
+        // height: (isDockOnSide() || (currentDockScreenPosition==screenPosition.top)|| newYosemiteBottomStyle) ? parent.height + 25: parent.height;
+        height: (isDockOnSide() || (currentDockScreenPosition==screenPosition.top)|| newYosemiteBottomStyle) ? parent.height + iconOnShelfPadding*1.3: parent.height;
 
         anchors.bottom: parent.bottom;
-        anchors.bottomMargin: (isDockOnSide() || (currentDockScreenPosition==screenPosition.top) || newYosemiteBottomStyle) ? -10 : lipHeight + 1;
+        // anchors.bottomMargin: (isDockOnSide() || (currentDockScreenPosition==screenPosition.top) || newYosemiteBottomStyle) ? -10 : lipHeight + 1;
+        anchors.bottomMargin: (isDockOnSide() || (currentDockScreenPosition==screenPosition.top) || newYosemiteBottomStyle) ? 4 : lipHeight + 1;
 ////        anchors.horizontalCenter: parent.horizontalCenter;
         anchors.left: parent.left
 //        anchors.leftMargin: (isDockOnSide() || newYosemiteBottomStyle) ? itemWidth/2 : 0

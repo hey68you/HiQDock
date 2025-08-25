@@ -490,6 +490,8 @@ void MainWindow::Activate()
 				return;
 			}
 
+            be_app->HideCursor();
+
 			// Capture the entire screen
 			fullScreenShotPixmap = screen->grabWindow(0); 			
 
@@ -524,6 +526,8 @@ void MainWindow::Activate()
 //                beWin_->Unlock();
 //            }
         }
+
+        be_app->ShowCursor();
     }
     else {
         qDebug() << "MainWindow::Activate beWin_ is NULL ?!!";

@@ -135,7 +135,8 @@ Component
         }
 
         anchors.bottom: parent.bottom;
-        anchors.bottomMargin: iconOnShelfPadding;
+        // anchors.bottomMargin: iconOnShelfPadding;
+        anchors.bottomMargin: iconOnShelfPadding + ((newYosemiteBottomStyle) ? 8 : 0);
 
         LayoutMirroring.enabled: isItemLessThanCurrentHovered(oneItem);
 

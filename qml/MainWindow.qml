@@ -195,7 +195,7 @@ Rectangle {
         {
             var oneAppSigString = appsModel.get(i)[appStringKey];
 
-            if (oneAppSigString.toUpperCase() == appSigString.toUpperCase())
+            if (oneAppSigString.toUpperCase() === appSigString.toUpperCase())
             {
                 //console.log("in QML app querying cpp to find out if other instances are still running: " + appSigString);
 
@@ -697,7 +697,12 @@ Rectangle {
                 if (mouseY < rowContainer.y - 10 - iconOnShelfPadding) {return;}
                 if (mouseY > rowContainer.y + rowContainer.height + 10 + iconOnShelfPadding*2) {return;}
 
-                if (rightPressOnCell) {return;}
+                if (rightPressOnCell) {
+                    return;
+                }
+                else {
+                    // console.log("->not rightPressOnCell");
+                }
 
                 //console.log("windowMouseField-->onExited: calling onEnteredDockIcons");
                 onEnteredDockIcons();
@@ -826,6 +831,10 @@ Rectangle {
                 }
 
                 onExited: {
+                    // console.log("in QML: onExited in dockMouseField - calling onExitedDockIcons");
+                    if (contextMenuWasShown) {
+                        return;
+                    }
                     isMouseInsideDock = no;
                     onExitedDockIcons();
                     exitedAnimation.start();

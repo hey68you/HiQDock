@@ -40,7 +40,7 @@ Component
             bounceAnimation.start();
         }
 
-        onSetChangingIcon:
+        onSetChangingIcon: (changingIcon) =>
         {
             if (changingIcon) {
                 blinkingBorderAnimation.start();

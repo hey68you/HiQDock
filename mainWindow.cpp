@@ -8,6 +8,7 @@
 #include <QScreen>
 #include <QMessageBox>
 #include <QFileIconProvider>
+#include <QFile>
 #include <QJSEngine>
 // #include <QDeclarativeContext>
 //#include <QScriptValue>
@@ -179,7 +180,7 @@ MainWindow::MainWindow()
     magnificationEnabled      = true;
     sizeSliderDragInProgress  = false;
     showRunningIndicators     = true;
-    newYosemiteBottomStyle    = false;
+    newYosemiteBottomStyle    = true;
     needsUpperRefresh         = false;
     currentDockScreenPosition = SCREEN_POSITION_BOTTOM;
 
@@ -219,7 +220,40 @@ MainWindow::MainWindow()
         dir.mkpath(iconsFolder);
     }
 
-	
+
+    QString pathAsString(userSettingsPath.Path());
+
+    QString originalFolder = "/boot/system/data/icons/haiku/apps/48";
+    QString symlinkPath = pathAsString + "/" + iconsFolder + "/haiku-svg-icons";
+
+    if (QFile::link(originalFolder, symlinkPath)) {
+        qDebug() << "Symbolic link created successfully!";
+    } else {
+        qDebug() << "Failed to create symbolic link." << originalFolder << "," << symlinkPath;
+    }
+
+    QString dataIconsFolder = "/boot/system/data/icons";
+    QString symlinkPathForSysIcons = pathAsString + "/" + iconsFolder + "/system-icons";
+
+    if (QFile::link(dataIconsFolder, symlinkPathForSysIcons)) {
+        qDebug() << "Symbolic link symlinkPathForSysIcons created successfully!";
+    } else {
+        qDebug() << "Failed to create symbolic link symlinkPathForSysIcons." << dataIconsFolder << "," << symlinkPathForSysIcons;
+    }
+
+    // ln -s /boot/system/data/icons/haiku/apps/48 /boot/home/config/settings/HiQDockIcons/haiku-svg-icons
+
+    // std::string linkCmd = "ln -s ";
+
+    // linkCmd += "/boot/system/data/icons/haiku/apps/48";
+    // linkCmd += " ";
+    // linkCmd += userSettingsPath.Path();
+    // linkCmd += "/";
+    // linkCmd += iconsFolder.toStdString();
+    // linkCmd += "/haiku-svg-icons";
+    // qDebug() << "full link command =>" << linkCmd.c_str();
+    // system(linkCmd.c_str());
+
 
     QString trackerStringFromSettings = readStringSettingsForKey(ALTERNATIVE_TRACKER_ICON_SETTINGS_KEY);
     QString trackerIconToLoadOnStartup;
@@ -309,7 +343,7 @@ MainWindow::MainWindow()
 //    view->rootContext()->setContextProperty("iconPath", QDir::currentPath() + "/" + iconsFolder);
     // view->rootContext()->setContextProperty("iconPath", QDir::homePath() + "/" + iconsFolder);
 	
-	QString pathAsString(userSettingsPath.Path());
+    // QString pathAsString(userSettingsPath.Path());
     view->rootContext()->setContextProperty("iconPath", pathAsString + "/" + iconsFolder);
 
     // double windowMaxWidth  = QApplication::desktop()->availableGeometry().width();

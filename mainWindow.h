@@ -93,6 +93,8 @@ class MainWindow : public QMainWindow
         virtual void paintEvent(QPaintEvent *pe);
         virtual void dropEvent(QDropEvent *event);
         virtual bool event(QEvent *evt);
+        // virtual void contextMenuEvent(QContextMenuEvent *event);
+
 //        virtual void mouseMoveEvent(QMouseEvent *event);
 
         int getCurrentDockScreenPosition();
@@ -128,6 +130,7 @@ class MainWindow : public QMainWindow
         Q_INVOKABLE void notifySetMagnificationEnabled(bool enable);
         Q_INVOKABLE void notifyUseNewYosemiteBottomStyle(bool useNewStyleOnBottom);
         Q_INVOKABLE void showPreferencesDialog();
+        Q_INVOKABLE void showContextMenuWindow(int indexOfItem);
         Q_INVOKABLE void notifyShowRunningIndicators(bool showIndicator);
         Q_INVOKABLE void notifyValueForSizeUpdated(double percent);
         Q_INVOKABLE void notifyValueForMagnificationUpdated(double percent);
@@ -152,7 +155,11 @@ class MainWindow : public QMainWindow
         void notifyApplistModified();
 
     protected:
+#ifndef QT_NO_CONTEXTMENU
+        void contextMenuEvent(QContextMenuEvent *event) /*override*/;
+#endif // QT_NO_CONTEXTMENU
         void closeEvent(QCloseEvent *event);
+
         virtual void showEvent(QShowEvent *event);
 
     private:
@@ -187,6 +194,7 @@ class MainWindow : public QMainWindow
         HQDDialogWindow  *iconPickerWin_;
         QQuickView       *pickerView;
         QMainWindow      *prefsDialogWin_;
+        // QMainWindow      *contextMenuWin_;
         int              itemWidth;
         int              minItemSize;
         int              maxItemSize;
@@ -204,6 +212,8 @@ class MainWindow : public QMainWindow
 //        BWindow          *beWin_;
 
         HaikuMouseTrackingView *mouseTrackingView_;
+
+        QAction *newAct;
 
 //        QSystemTrayIcon *trayIcon;
 //        QMenu           *trayIconMenu;

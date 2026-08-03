@@ -534,7 +534,12 @@ Component
 
                 if (mouse.button === Qt.RightButton)
                 {
-                    showContextMenu();
+                    // mainWindowPopup.open();
+                    // showContextMenu();
+
+                    contextMenuWasShown = yes;
+                    console.log("joel->which icon => ", index);
+                    mainWin.showContextMenuWindow(index);
                     return;
                 }
                 else if (mouse.button !== Qt.RightButton)

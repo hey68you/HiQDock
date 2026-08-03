@@ -1,4 +1,5 @@
 import QtQuick 2.5
+import QtQuick.Controls 2.5
 
 Rectangle {
 
@@ -107,6 +108,7 @@ Rectangle {
     // signal afterNewIconPicked(string pathToIcon, number indexOfItem);
 
     property alias mouseState: mouseState;
+    // property alias mainWindowPopup: myPopup
 
     QtObject {
         id: mouseState;
@@ -865,7 +867,8 @@ Rectangle {
                 }
             }
 
-            ToolTip
+            // ToolTip
+            ToolTipCustom
             {
                 id: toolTip
 

@@ -20,6 +20,7 @@
 //#include "/boot/common/include/Qt/qscriptengine.h"
 // #include "/boot/system/develop/headers/Qt/qscriptengine.h"
 #include <QStandardPaths>
+#include <QMenu>
 #include <Application.h>
 
 #include <storage/Entry.h>
@@ -169,6 +170,7 @@ MainWindow::MainWindow()
     mouseTrackingView_        = NULL;
     iconPickerWin_            = NULL;
     prefsDialogWin_           = NULL;
+    // contextMenuWin_           = NULL;
     isDockHidden_             = false;
     itemWidth                 = 36;
     minItemSize               = 16;
@@ -430,6 +432,13 @@ MainWindow::MainWindow()
     QObject::connect(this, SIGNAL(notifyQMLValueForSizeUpdated(QVariant)), rootObject, SLOT(notifyQMLValueForSizeUpdated_SLOT(QVariant)));
     QObject::connect(this, SIGNAL(updateNewScreenPosition(QVariant)), rootObject, SLOT(updateNewScreenPosition_SLOT(QVariant)));
     QObject::connect(this, SIGNAL(notifyApplistModified()), rootObject, SLOT(notifyApplistModified_SLOT()));
+
+
+    // newAct = new QAction(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew),
+    newAct = new QAction(tr("&Dock Options"), this);
+    // newAct->setShortcuts(QKeySequence::New);
+    // newAct->setStatusTip(tr("Create a new file"));
+    connect(newAct, &QAction::triggered, this, &MainWindow::showPreferencesDialog);
 }
 
 
@@ -648,6 +657,19 @@ void MainWindow::paintEvent(QPaintEvent *pe)
 //{
 //    QTimer::singleShot(2000, this, SLOT(TakeUpperScreenShot()));
 //}
+
+#ifndef QT_NO_CONTEXTMENU
+void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu(this);
+    menu.addAction(newAct);
+    // menu.addAction(cutAct);
+    // menu.addAction(copyAct);
+    // menu.addAction(pasteAct);
+    // menu.exec(event->globalPos());
+    menu.exec(QPoint(event->globalPos().x(), event->globalPos().y() - maxItemSize) );
+}
+#endif // QT_NO_CONTEXTMENU
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
@@ -1110,6 +1132,78 @@ void MainWindow::showPreferencesDialog()
 //    prefsBWindow->SetFlags(B_NOT_RESIZABLE);
     prefsBWindow->SetLook(B_MODAL_WINDOW_LOOK);
 }
+
+void MainWindow::showContextMenuWindow(int indexOfItem)
+{
+}
+
+// void MainWindow::showContextMenuWindow(int indexOfItem)
+// {
+//     if (contextMenuWin_ != NULL)
+//     {
+//         QRect contextMenuWinRect_ = contextMenuWin_->geometry();
+//         QRect availGeom = screen->availableGeometry();
+//         contextMenuWinRect_.moveCenter(availGeom.center());
+//         contextMenuWin_->setGeometry(contextMenuWinRect_);
+//         contextMenuWin_->show();
+//         contextMenuWin_->activateWindow();
+//         return;
+//     }
+
+//     contextMenuWin_ = new QMainWindow(0, /*Qt::SubWindow*/Qt::Tool);
+//     contextMenuWin_->setWindowTitle("Context Menu");
+//     // QDeclarativeView *contextMenuView = new QDeclarativeView;
+//     QQuickView *contextMenuView = new QQuickView;
+
+//     // contextMenuView->rootContext()->setContextProperty("currentDockScreenPosition", currentDockScreenPosition);
+//     // contextMenuView->rootContext()->setContextProperty("magnificationEnabled", magnificationEnabled);
+//     // contextMenuView->rootContext()->setContextProperty("autoHideEnabled", autoHideEnabled);
+//     // contextMenuView->rootContext()->setContextProperty("showRunningIndicators", showRunningIndicators);
+//     // contextMenuView->rootContext()->setContextProperty("newYosemiteBottomStyle", newYosemiteBottomStyle);
+//     contextMenuView->rootContext()->setContextProperty("itemWidth", itemWidth);
+//     // contextMenuView->rootContext()->setContextProperty("minItemSize", minItemSize);
+//     // contextMenuView->rootContext()->setContextProperty("maxItemSize", maxItemSize);
+//     // contextMenuView->rootContext()->setContextProperty("currentMagnificationIndex", currentMagnificationIndex);
+
+//     // contextMenuView->setSource(QUrl("qrc:///qml/HiQDockPreferences/HiQDockPreferences.qml"));
+//     contextMenuView->setSource(QUrl("qrc:///qml/NewContextMenu.qml"));
+//     // contextMenuView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+//     contextMenuView->setResizeMode(QQuickView::SizeRootObjectToView);
+
+
+
+//     // QObject *rootObject = dynamic_cast<QObject*>(contextMenuView->rootObject());
+
+//     // QObject::connect(rootObject, SIGNAL(showHideRunningIndicators(bool)), this, SLOT(notifyShowRunningIndicators(bool)));
+//     // QObject::connect(rootObject, SIGNAL(setAutoHide(bool)), this, SLOT(notifySetAutoHide(bool)));
+//     // QObject::connect(rootObject, SIGNAL(setMagnificationEnabled(bool)), this, SLOT(notifySetMagnificationEnabled(bool)));
+//     // QObject::connect(rootObject, SIGNAL(useNewYosemiteBottomStyle(bool)), this, SLOT(notifyUseNewYosemiteBottomStyle(bool)));
+//     // QObject::connect(rootObject, SIGNAL(sizeDraggingInProgress(bool)), this, SLOT(notifySizeDraggingInProgress(bool)));
+//     // QObject::connect(rootObject, SIGNAL(valueForSizeUpdated(double)), this, SLOT(notifyValueForSizeUpdated(double)));
+//     // QObject::connect(rootObject, SIGNAL(valueForMagnificationUpdated(double)), this, SLOT(notifyValueForMagnificationUpdated(double)));
+//     // QObject::connect(rootObject, SIGNAL(setNewScreenPosition(int)), this, SLOT(notifySetNewScreenPosition(int)));
+
+//     QWidget *container = QWidget::createWindowContainer(contextMenuView);
+//     // contextMenuWin_->setCentralWidget(contextMenuView);
+//     contextMenuWin_->setCentralWidget(container);
+//     contextMenuWin_->setWindowModality(Qt::WindowModal);
+
+//     // container->setClearColor(Qt::transparent);
+//     container->setAttribute(Qt::WA_TranslucentBackground);
+//     container->setAttribute(Qt::WA_AlwaysStackOnTop);
+
+//     contextMenuWin_->show();
+
+//     QRect contextMenuWinRect_ = contextMenuWin_->geometry();
+//     QRect availGeom = screen->availableGeometry();
+//     // contextMenuWinRect_.moveCenter(QApplication::desktop()->availableGeometry().center());
+//     contextMenuWinRect_.moveCenter(availGeom.center());
+//     contextMenuWin_->setGeometry(contextMenuWinRect_);
+
+//     BWindow *contextMenuBWindow = dynamic_cast<BWindow*>(contextMenuWin_);
+//     //    contextMenuBWindow->SetFlags(B_NOT_RESIZABLE);
+//     contextMenuBWindow->SetLook(B_MODAL_WINDOW_LOOK);
+// }
 
 void MainWindow::notifyValueForMagnificationUpdated(double percent)
 {
@@ -1916,5 +2010,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
         prefsDialogWin_->close();
         prefsDialogWin_->deleteLater();
     }
+
+    // if (contextMenuWin_ != NULL) {
+    //     contextMenuWin_->close();
+    //     contextMenuWin_->deleteLater();
+    // }
     event->accept();
 }

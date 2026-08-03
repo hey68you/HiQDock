@@ -1,32 +1,31 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource prefix="/">
-    <file>NoIconApplication.svg</file>
-    <file>defaultLauncherIcons/ActivityMonitor.svg</file>
-    <file>defaultLauncherIcons/DeskCalc.svg</file>
-    <file>defaultLauncherIcons/Magnify.svg</file>
-    <file>defaultLauncherIcons/MediaPlayer.svg</file>
-    <file>defaultLauncherIcons/StyledEdit.svg</file>
-    <file>defaultLauncherIcons/Terminal.svg</file>
-    <file>defaultLauncherIcons/Tracker.svg</file>
-    <file>defaultLauncherIcons/Trash.svg</file>
-
-    <file>qml/MainWindow.qml</file>
-    <file>qml/LauncherCellComponent.qml</file>
-    <file>qml/ContextMenu.qml</file>
-    <file>qml/MenuBackground.qml</file>
-    <file>qml/Shelf.qml</file>
-    <file>qml/ToolTip.qml</file>
-
-    <file>qml/macToolTip_center.png</file>
-    <file>qml/macToolTip_center_s.png</file>
-    <file>qml/macToolTip_right_s.png</file>
-    <file>qml/macToolTip_left_s.png</file>
-
-    <file>qml/IconPicker.qml</file>
-    <file>qml/HiQDockPreferences/HiQDockPreferences.qml</file>
-    <file>qml/HiQDockPreferences/CheckBox.qml</file>
-    <file>qml/HiQDockPreferences/MacSlider.qml</file>
-    <file>qml/HiQDockPreferences/RadioGroupBox.qml</file>
-    <file>qml/digital_7_mono.ttf</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>NoIconApplication.svg</file>
+        <file>defaultLauncherIcons/ActivityMonitor.svg</file>
+        <file>defaultLauncherIcons/DeskCalc.svg</file>
+        <file>defaultLauncherIcons/Magnify.svg</file>
+        <file>defaultLauncherIcons/MediaPlayer.svg</file>
+        <file>defaultLauncherIcons/StyledEdit.svg</file>
+        <file>defaultLauncherIcons/Terminal.svg</file>
+        <file>defaultLauncherIcons/Tracker.svg</file>
+        <file>defaultLauncherIcons/Trash.svg</file>
+        <file>qml/MainWindow.qml</file>
+        <file>qml/LauncherCellComponent.qml</file>
+        <file>qml/ContextMenu.qml</file>
+        <file>qml/MenuBackground.qml</file>
+        <file>qml/Shelf.qml</file>
+        <file>qml/macToolTip_center.png</file>
+        <file>qml/macToolTip_center_s.png</file>
+        <file>qml/macToolTip_right_s.png</file>
+        <file>qml/macToolTip_left_s.png</file>
+        <file>qml/IconPicker.qml</file>
+        <file>qml/HiQDockPreferences/HiQDockPreferences.qml</file>
+        <file>qml/HiQDockPreferences/CheckBox.qml</file>
+        <file>qml/HiQDockPreferences/MacSlider.qml</file>
+        <file>qml/HiQDockPreferences/RadioGroupBox.qml</file>
+        <file>qml/digital_7_mono.ttf</file>
+        <file>qml/NewContextMenu.qml</file>
+        <file>qml/ToolTipCustom.qml</file>
+        <file>qml/test-this.qml</file>
+    </qresource>
 </RCC>

@@ -12,13 +12,13 @@ LIBS += -ltracker
 
 QT += core gui widgets quickwidgets
 QT += qml quick
-# CONFIG += debug
-# CONFIG += qml_debug
+CONFIG += debug
+CONFIG += qml_debug
 
 
 RESOURCES += HiQDock.qrc
 
-DEFINES += QT_NO_DEBUG_OUTPUT
+# DEFINES += QT_NO_DEBUG_OUTPUT
 
 # Input
 HEADERS += mainWindow.h \

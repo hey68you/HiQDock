@@ -185,7 +185,8 @@ class MainWindow : public QMainWindow
         BFilePanel       *fPanelOpen;
 //        QMainWindow      *iconPickerWin_;
         HQDDialogWindow  *iconPickerWin_;
-        QQuickView       *pickerView;
+        //QQuickView       *pickerView;
+		QQuickWidget     *pickerView;
         QMainWindow      *prefsDialogWin_;
         int              itemWidth;
         int              minItemSize;

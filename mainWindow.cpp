@@ -731,9 +731,11 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
     iconPickerWin_->setWindowTitle("HiQDock - Set New Icon");
     // iconPickerWin_->setAttribute(Qt::WA_DeleteOnClose);
 
-// //    QDeclarativeView *pickerView = new QDeclarativeView;
-//     pickerView = new QDeclarativeView;
-    pickerView = new QQuickView;
+//// //    QDeclarativeView *pickerView = new QDeclarativeView;
+////     pickerView = new QDeclarativeView;
+//    pickerView = new QQuickView;
+	pickerView = new QQuickWidget(iconPickerWin_);
+	
 
 
 //    qDebug() << "QDir::currentPath() + / iconsFolder =  " << QDir::homePath() << "/" << iconsFolder;
@@ -749,17 +751,22 @@ void MainWindow::setIconImageForItemAt(int indexOfItem)
     pickerView->rootContext()->setContextProperty("originalIconImageSource", getIconBase64UriForFile(getStringValueFromJSON(appStringKey, dataList.at(indexOfItem))));
 
     pickerView->setSource(QUrl("qrc:///qml/IconPicker.qml"));
-    // pickerView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    pickerView->setResizeMode(QQuickView::SizeRootObjectToView);
+    //// pickerView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    //pickerView->setResizeMode(QQuickView::SizeRootObjectToView);
+	pickerView->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
-    QObject *rootObject = dynamic_cast<QObject*>(pickerView->rootObject());
-    QObject::connect(rootObject, SIGNAL(iconSelected(QString)), this, SLOT(notifyIconPicked(QString)));
-    QObject::connect(iconPickerWin_, SIGNAL(windowWillClose(QString)), this, SLOT(notifyIconPicked(QString)));
+    //QObject *rootObject = dynamic_cast<QObject*>(pickerView->rootObject());
+	QObject *rootObject = pickerView->rootObject();
+	
+	if (rootObject) {
+		QObject::connect(rootObject, SIGNAL(iconSelected(QString)), this, SLOT(notifyIconPicked(QString)));
+		QObject::connect(iconPickerWin_, SIGNAL(windowWillClose(QString)), this, SLOT(notifyIconPicked(QString)));
+	}
 
-	QWidget *container = QWidget::createWindowContainer(pickerView);
+	//QWidget *container = QWidget::createWindowContainer(pickerView);
 
-    // iconPickerWin_->setCentralWidget(pickerView);
-    iconPickerWin_->setCentralWidget(container);
+    iconPickerWin_->setCentralWidget(pickerView);
+    //iconPickerWin_->setCentralWidget(container);
     iconPickerWin_->setWindowModality(Qt::ApplicationModal);
 	
 	QRect availGeom = screen->availableGeometry();
@@ -1047,7 +1054,7 @@ void MainWindow::notifyUseNewYosemiteBottomStyle(bool useNewStyleOnBottom)
     view->rootContext()->setContextProperty("newYosemiteBottomStyle", newYosemiteBottomStyle);
     writeSettings();
 }
-
+// 
 void MainWindow::showPreferencesDialog()
 {
     if (prefsDialogWin_ != NULL)
@@ -1063,8 +1070,9 @@ void MainWindow::showPreferencesDialog()
 
     prefsDialogWin_ = new QMainWindow(0, /*Qt::SubWindow*/Qt::Tool);
     prefsDialogWin_->setWindowTitle("HiQDock Options");
-    // QDeclarativeView *prefsView = new QDeclarativeView;
-    QQuickView *prefsView = new QQuickView;
+    //// QDeclarativeView *prefsView = new QDeclarativeView;
+    //QQuickView *prefsView = new QQuickView;
+	QQuickWidget *prefsView = new QQuickWidget(prefsDialogWin_);
 
     prefsView->rootContext()->setContextProperty("currentDockScreenPosition", currentDockScreenPosition);
     prefsView->rootContext()->setContextProperty("magnificationEnabled", magnificationEnabled);
@@ -1077,24 +1085,28 @@ void MainWindow::showPreferencesDialog()
     prefsView->rootContext()->setContextProperty("currentMagnificationIndex", currentMagnificationIndex);
 
     prefsView->setSource(QUrl("qrc:///qml/HiQDockPreferences/HiQDockPreferences.qml"));
-    // prefsView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    prefsView->setResizeMode(QQuickView::SizeRootObjectToView);
+    //// prefsView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    //prefsView->setResizeMode(QQuickView::SizeRootObjectToView);
+	prefsView->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
-    QObject *rootObject = dynamic_cast<QObject*>(prefsView->rootObject());
+    //QObject *rootObject = dynamic_cast<QObject*>(prefsView->rootObject());
+	QObject *rootObject = prefsView->rootObject();
+	
+	if (rootObject) {
+		QObject::connect(rootObject, SIGNAL(showHideRunningIndicators(bool)), this, SLOT(notifyShowRunningIndicators(bool)));
+		QObject::connect(rootObject, SIGNAL(setAutoHide(bool)), this, SLOT(notifySetAutoHide(bool)));
+		QObject::connect(rootObject, SIGNAL(setMagnificationEnabled(bool)), this, SLOT(notifySetMagnificationEnabled(bool)));
+		QObject::connect(rootObject, SIGNAL(useNewYosemiteBottomStyle(bool)), this, SLOT(notifyUseNewYosemiteBottomStyle(bool)));
+		QObject::connect(rootObject, SIGNAL(sizeDraggingInProgress(bool)), this, SLOT(notifySizeDraggingInProgress(bool)));
+		QObject::connect(rootObject, SIGNAL(valueForSizeUpdated(double)), this, SLOT(notifyValueForSizeUpdated(double)));
+		QObject::connect(rootObject, SIGNAL(valueForMagnificationUpdated(double)), this, SLOT(notifyValueForMagnificationUpdated(double)));
+		QObject::connect(rootObject, SIGNAL(setNewScreenPosition(int)), this, SLOT(notifySetNewScreenPosition(int)));
+	}
 
-    QObject::connect(rootObject, SIGNAL(showHideRunningIndicators(bool)), this, SLOT(notifyShowRunningIndicators(bool)));
-    QObject::connect(rootObject, SIGNAL(setAutoHide(bool)), this, SLOT(notifySetAutoHide(bool)));
-    QObject::connect(rootObject, SIGNAL(setMagnificationEnabled(bool)), this, SLOT(notifySetMagnificationEnabled(bool)));
-    QObject::connect(rootObject, SIGNAL(useNewYosemiteBottomStyle(bool)), this, SLOT(notifyUseNewYosemiteBottomStyle(bool)));
-    QObject::connect(rootObject, SIGNAL(sizeDraggingInProgress(bool)), this, SLOT(notifySizeDraggingInProgress(bool)));
-    QObject::connect(rootObject, SIGNAL(valueForSizeUpdated(double)), this, SLOT(notifyValueForSizeUpdated(double)));
-    QObject::connect(rootObject, SIGNAL(valueForMagnificationUpdated(double)), this, SLOT(notifyValueForMagnificationUpdated(double)));
-    QObject::connect(rootObject, SIGNAL(setNewScreenPosition(int)), this, SLOT(notifySetNewScreenPosition(int)));
-
-
-	QWidget *container = QWidget::createWindowContainer(prefsView);
-    // prefsDialogWin_->setCentralWidget(prefsView);
-    prefsDialogWin_->setCentralWidget(container);
+	//QWidget *container = QWidget::createWindowContainer(prefsView);
+    //// prefsDialogWin_->setCentralWidget(prefsView);
+    //prefsDialogWin_->setCentralWidget(container);
+	prefsDialogWin_->setCentralWidget(prefsView);
     prefsDialogWin_->setWindowModality(Qt::WindowModal);
 
 
@@ -1108,7 +1120,10 @@ void MainWindow::showPreferencesDialog()
 
     BWindow *prefsBWindow = dynamic_cast<BWindow*>(prefsDialogWin_);
 //    prefsBWindow->SetFlags(B_NOT_RESIZABLE);
-    prefsBWindow->SetLook(B_MODAL_WINDOW_LOOK);
+	if (prefsBWindow) {
+		prefsBWindow->SetLook(B_MODAL_WINDOW_LOOK);
+	}
+    
 }
 
 void MainWindow::notifyValueForMagnificationUpdated(double percent)

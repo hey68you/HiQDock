@@ -25,6 +25,16 @@
 #include <storage/Entry.h>
 //#include <storage/Path.h>
 #include <storage/AppFileInfo.h>
+
+#include <fs_attr.h>
+#include <Node.h>
+#include <TypeConstants.h>
+#include <vector>
+
+// Make sure you include the header from the hvif-tools repository
+#include "IconConverter.h" 
+
+
 //#include "ui_PreferencesDialog.h"
 //#include "mainWindow.h"
 #include "HQDDialogWindow.h"
@@ -1721,10 +1731,52 @@ void MainWindow::loadDefaultLaunchers()
 }
 
 
+// QString MainWindow::getIconBase64UriForFile(const QString &appSignatureString)
+// {
+////qDebug() << "MainWindow::getIconBase64UriForFile = " + appSignatureString;
+// 
+    // entry_ref ref;
+    // status_t stat = be_roster->FindApp(appSignatureString.toLatin1().data(), &ref);
+// 
+    // QString fileFullPath;
+// 
+    // if (stat == B_OK)
+    // {
+        // BEntry myBEntry(&ref, TRUE);
+// 
+        // char name[B_FILE_NAME_LENGTH];
+        // myBEntry.GetName(name);
+        // myBEntry.GetParent(&myBEntry);
+        // BPath P;
+        // myBEntry.GetPath(&P);
+        // fileFullPath = QString(P.Path()) + "/" + QString(name);
+    // }
+    // else //probably not an app but a regular file or directory
+    // {
+        // QFileInfo fileInfo(appSignatureString);
+        // if (fileInfo.exists()) {
+              // fileFullPath = appSignatureString;
+        // }
+        // else {
+            // return "";
+        // }
+    // }
+// 
+    // QFileInfo qFileInfo(fileFullPath);
+// 
+    // QFileIconProvider iconProvider;
+    // QIcon theIcon = iconProvider.icon(qFileInfo);
+    // QByteArray byteArray;
+    // QBuffer    buffer(&byteArray);
+    // buffer.open(QIODevice::WriteOnly);
+    // theIcon.pixmap(QSize(32, 32), QIcon::Normal, QIcon::On).save(&buffer, "PNG");
+    // QString iconBase64 = QString(byteArray.toBase64());
+    // return "data:image/png;base64," + iconBase64;
+// }
+
 QString MainWindow::getIconBase64UriForFile(const QString &appSignatureString)
 {
-//    qDebug() << "MainWindow::getIconBase64UriForFile = " + appSignatureString;
-
+	qDebug() << "MainWindow::getIconBase64UriForFile = " + appSignatureString;
     entry_ref ref;
     status_t stat = be_roster->FindApp(appSignatureString.toLatin1().data(), &ref);
 
@@ -1741,7 +1793,7 @@ QString MainWindow::getIconBase64UriForFile(const QString &appSignatureString)
         myBEntry.GetPath(&P);
         fileFullPath = QString(P.Path()) + "/" + QString(name);
     }
-    else //probably not an app but a regular file or directory
+    else 
     {
         QFileInfo fileInfo(appSignatureString);
         if (fileInfo.exists()) {
@@ -1752,8 +1804,62 @@ QString MainWindow::getIconBase64UriForFile(const QString &appSignatureString)
         }
     }
 
-    QFileInfo qFileInfo(fileFullPath);
+    // --- NEW: Attempt to extract and convert the HVIF icon to SVG ---
+    qDebug() << "--------------------------------------------------";
+    qDebug() << "Attempting HVIF extraction for:" << fileFullPath;
 
+    BNode node(fileFullPath.toUtf8().constData());
+    if (node.InitCheck() != B_OK) {
+        qDebug() << "FAIL: BNode could not open the file. InitCheck failed.";
+    } else {
+        attr_info attrInfo;
+        status_t attrStatus = node.GetAttrInfo("BEOS:ICON", &attrInfo);
+        
+        if (attrStatus != B_OK) {
+            qDebug() << "FAIL: GetAttrInfo failed. The file does not have a 'BEOS:ICON' attribute.";
+        } else {
+            qDebug() << "SUCCESS: Found 'BEOS:ICON' attribute. Size:" << attrInfo.size << "bytes.";
+            qDebug() << "Attribute Type:" << attrInfo.type << "| Expected Vector Type:" << B_VECTOR_ICON_TYPE;
+            
+            if (attrInfo.type != B_VECTOR_ICON_TYPE) {
+                qDebug() << "FAIL: The 'BEOS:ICON' attribute is not an HVIF vector icon (probably an old bitmap).";
+            } else {
+                std::vector<uint8_t> hvifBuffer(attrInfo.size);
+                ssize_t bytesRead = node.ReadAttr("BEOS:ICON", B_VECTOR_ICON_TYPE, 0, hvifBuffer.data(), attrInfo.size);
+                qDebug() << "ReadAttr bytes read:" << bytesRead << "| Expected:" << attrInfo.size;
+                
+                if (bytesRead > 0 && bytesRead == attrInfo.size) {
+                    std::vector<uint8_t> svgBuffer;
+                    haiku::ConvertOptions iconOpts;
+                    
+                    qDebug() << "Calling haiku::IconConverter::ConvertBuffer...";
+                    bool status = haiku::IconConverter::ConvertBuffer(
+                        hvifBuffer, haiku::FORMAT_HVIF,
+                        svgBuffer, haiku::FORMAT_SVG,
+                        iconOpts
+                    );
+                    
+                    qDebug() << "ConvertBuffer returned:" << status << "| svgBuffer size:" << svgBuffer.size();
+                    
+                    if (status && !svgBuffer.empty()) {
+                        qDebug() << "SUCCESS: HVIF to SVG conversion complete!";
+                        QByteArray svgData(reinterpret_cast<const char*>(svgBuffer.data()), svgBuffer.size());
+                        QString iconBase64 = QString(svgData.toBase64());
+                        return "data:image/svg+xml;base64," + iconBase64;
+                    } else {
+                        qDebug() << "FAIL: IconConverter returned false or svgBuffer is empty.";
+                    }
+                } else {
+                    qDebug() << "FAIL: Could not read the full attribute data.";
+                }
+            }
+        }
+    }
+
+    qDebug() << "Falling back to old PNG rendering...";
+    // --- FALLBACK: Your original PNG method ---
+    // If the file only has older bitmap icons, or conversion fails, do what you did before.
+    QFileInfo qFileInfo(fileFullPath);
     QFileIconProvider iconProvider;
     QIcon theIcon = iconProvider.icon(qFileInfo);
     QByteArray byteArray;
@@ -1761,9 +1867,9 @@ QString MainWindow::getIconBase64UriForFile(const QString &appSignatureString)
     buffer.open(QIODevice::WriteOnly);
     theIcon.pixmap(QSize(32, 32), QIcon::Normal, QIcon::On).save(&buffer, "PNG");
     QString iconBase64 = QString(byteArray.toBase64());
+    
     return "data:image/png;base64," + iconBase64;
 }
-
 
 QString MainWindow::readStringSettingsForKey(const QString &settingsKey)
 {

@@ -6,14 +6,21 @@ TEMPLATE = app
 TARGET = HiQDock
 DEPENDPATH += .
 INCLUDEPATH += .
+INCLUDEPATH += /boot/system/develop/headers/hviftools/common
+INCLUDEPATH += /boot/system/develop/headers/hviftools/export
+INCLUDEPATH += /boot/system/develop/headers/hviftools/import
+INCLUDEPATH += /boot/system/develop/headers/imagetracer/core
+INCLUDEPATH += /boot/system/develop/headers/imagetracer/processing
+
 
 LIBS += -lbe
 LIBS += -ltracker
+LIBS += -L/boot/system/lib -lhviftools
 
 QT += core gui widgets quickwidgets
 QT += qml quick
-# CONFIG += debug
-# CONFIG += qml_debug
+#CONFIG += debug
+#CONFIG += qml_debug
 
 
 RESOURCES += HiQDock.qrc

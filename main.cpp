@@ -4,6 +4,8 @@
 #include <QMainWindow>
 // #include <QDeclarativeView>
 #include <QQuickView>
+#include <QQuickWindow>
+#include <QSGRendererInterface>
 #include <Roster.h>
 #include <Messenger.h>
 #include <Application.h>
@@ -91,9 +93,24 @@ int main(int argc, char *argv[])
     QLoggingCategory::setFilterRules("qml=false");
 #endif
 
+    // HiQDock renders its QML through QQuickWidget. On Haiku the RHI/OpenGL path
+    // cannot compile the scene graph shaders, so the software scenegraph adaptation
+    // is required. Request it before the first QQuickWindow, which MainWindow creates.
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::Software);
+
+
     QApplication app(argc, argv);
 //    QBeApplication app(argc, argv);
 
+
+    // The Qt Configurator's "Use Software 2d context renderer" option selects the same
+    // adaptation by exporting QMLSCENE_DEVICE=softwarecontext, and that is the mechanism
+    // that is known to work here. Request it from the application as well, so HiQDock
+    // behaves identically whether or not that option is enabled. Set after QApplication
+    // because the Haiku platform plugin rebuilds the process environment (clearenv plus
+    // putenv) while the platform integration is created inside that constructor.
+    qputenv("QMLSCENE_DEVICE", "softwarecontext");
+	
 //extern const char *kApplicationSignature = "application/x-vnd.HiDock";
 //
 //HDockApp::HDockApp()
